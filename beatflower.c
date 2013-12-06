@@ -48,16 +48,16 @@
 
 static VisPlugin    beatflower;
 config_t     beatflower_config;
-config_t     beatflower_newconfig;
-pthread_mutex_t     beatflower_status_mutex  = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t     beatflower_data_mutex    = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t     beatflower_config_mutex  = PTHREAD_MUTEX_INITIALIZER;
+//config_t     beatflower_newconfig;
+SDL_mutex     *beatflower_status_mutex  = NULL;
+SDL_mutex     *beatflower_data_mutex    = NULL;
+SDL_mutex     *beatflower_config_mutex  = NULL;
 bool         beatflower_config_loaded = FALSE;
 /*static bool         reinit        = FALSE;*/
 bool         beatflower_playing;
 bool         beatflower_finished;            /* some status variables... */
 bool         beatflower_reset;
-pthread_t    beatflower_thread;       /* beatflower_thread that does the drawing */
+SDL_Thread  *beatflower_thread = NULL;       /* beatflower_thread that does the drawing */
 gint16       beatflower_pcm_data[2][512];    /* 2 channel pcm and freq data */
 gint16       beatflower_freq_data[2][256];
 static SDL_Surface *screen;
@@ -103,7 +103,7 @@ static bool         check_finished();
 
 void config_set_defaults(config_t *cfg)
 {
-  g_message("%s:", __func__);
+  g_message("%s:", __PRETTY_FUNCTION__);
 
   cfg->width  = 320;
   cfg->height = 320;
@@ -183,7 +183,7 @@ static void create_color_table()
 
    when x1 = x2 and y1 = y2, nothing is drawed
 */
-__inline__ static void line(Uint32 x1, Uint32 y1,
+/*__inline__*/ static void line(Uint32 x1, Uint32 y1,
                             Uint32 x2, Uint32 y2)
 {
   register Sint32 dx;
@@ -265,18 +265,61 @@ static void create_sine_tables()
 
 
 /* initialize the beatflower engine */
-__inline__ static void init_engine()
+/*__inline__*/ static void init_engine()
 {
-  g_message("%s:", __func__);
+	fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
+	fflush(stderr);
 
-  pthread_mutex_lock(&beatflower_config_mutex);
+  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE) < 0)
+					g_error("SDL_Init() failed!");
+  else
+					g_message("SDL_Init() ok.");
 
+  beatflower_status_mutex = SDL_CreateMutex();
+	beatflower_data_mutex = SDL_CreateMutex();
+	beatflower_config_mutex = SDL_CreateMutex();
+
+  SDL_LockMutex(beatflower_config_mutex);
   beatflower_xmms_config_load(&beatflower_config);
 
   g_message("Initializing beatflower video mode %ux%u ...", beatflower_config.width, beatflower_config.height);
 
-  screen = SDL_SetVideoMode(beatflower_config.width, beatflower_config.height, 32, SDL_SWSURFACE);
-  
+#if SDL_MAJOR_VERSION < 2
+  //screen = SDL_SetVideoMode(beatflower_config.width, beatflower_config.height, 32, SDL_SWSURFACE);
+  screen = SDL_SetVideoMode(beatflower_config.width, beatflower_config.height, 32, SDL_HWSURFACE);
+
+	g_message("SDL_SetVideoMode = %p (%s)", screen, SDL_GetError());
+
+	//SDL_FillRect(screen, NULL, 0xffffffff);
+	SDL_Flip(screen);
+
+	SDL_WM_SetCaption("beatflower v"VERSION, NULL);
+#else
+ 
+    // Initialise libSDL.
+    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+        g_message("Could not initialize SDL: %s.\n", SDL_GetError());
+        return;        
+    }
+
+    // Create SDL graphics objects.
+    SDL_Window * window = SDL_CreateWindow(
+            PACKAGE" v"VERSION,
+            SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_UNDEFINED,
+            beatflower_config.width, beatflower_config.height,
+            SDL_WINDOW_SHOWN/*|SDL_WINDOW_RESIZABLE*/);
+    if (!window) {
+        g_error("Couldn't create window: %s\n", SDL_GetError());
+        return;
+        //quit(3);
+    }
+
+
+	screen = SDL_GetWindowSurface(window);
+#endif
+	g_message("screen = %08xl", (unsigned long) screen);
+ 
   pixels = screen->pixels;
   pitch  = screen->pitch;
   width  = screen->w;
@@ -308,10 +351,10 @@ __inline__ static void init_engine()
   init_transform();
   create_color_table();
   
-  pthread_mutex_unlock(&beatflower_config_mutex);
+  SDL_UnlockMutex(beatflower_config_mutex);
 }
   
-__inline__ static Uint32 average(Uint32 c1, Uint32 c2,
+/*__inline__*/ static Uint32 average(Uint32 c1, Uint32 c2,
                                  Uint32 c3, Uint32 c4)
 {
   register Uint32 red, green, blue;
@@ -334,7 +377,7 @@ __inline__ static Uint32 average(Uint32 c1, Uint32 c2,
   return (red << RED_SHIFT | green << GREEN_SHIFT | blue << BLUE_SHIFT);
 }
 
-__inline__ static void zoom(register Sint32 *x, register Sint32 *y)
+/*__inline__*/ static void zoom(register Sint32 *x, register Sint32 *y)
 {
   Sint32 newx, newy;
   double bx, by;
@@ -364,7 +407,7 @@ __inline__ static void zoom(register Sint32 *x, register Sint32 *y)
   *y = newy;
 }
 
-__inline__ static void rotate(register Sint32 *x, register Sint32 *y)
+/*__inline__*/ static void rotate(register Sint32 *x, register Sint32 *y)
 {
   Sint32 newx, newy;
   double bx, by;
@@ -454,7 +497,7 @@ static void black()
   memset(pixels, 0, pitch * height);
 }
 
-static __inline__ int amplification(int value)
+static /*__inline__*/ int amplification(int value)
 {
   register int v = value;
   
@@ -467,7 +510,7 @@ static __inline__ int amplification(int value)
   return v;
 }
 
-static __inline__ int offset(int value)
+static /*__inline__*/ int offset(int value)
 {
   register int v = amplification(value);
   
@@ -583,17 +626,17 @@ static bool check_finished()
 {
   bool ret;
   
-  pthread_mutex_lock(&beatflower_status_mutex);
+  SDL_LockMutex(beatflower_status_mutex);
   
   ret = beatflower_finished;
   
   if(beatflower_reset)
-    {
+  {
       beatflower_reset = FALSE;      
       init_engine();
-    }
+  }
   
-  pthread_mutex_unlock(&beatflower_status_mutex);
+  SDL_UnlockMutex(beatflower_status_mutex);
     
   return ret;
 }
@@ -602,9 +645,9 @@ static bool check_playing()
 {
   bool ret;
   
-  pthread_mutex_lock(&beatflower_status_mutex);
+  SDL_LockMutex(beatflower_status_mutex);
   ret = beatflower_playing;
-  pthread_mutex_unlock(&beatflower_status_mutex);
+  SDL_UnlockMutex(beatflower_status_mutex);
   
   return ret;
 }
@@ -612,8 +655,10 @@ static bool check_playing()
 
 void *beatflower_thread_function(void *blah)
 { 
-  g_message("%s:", __func__);
+  fprintf(stderr,"%s()\n", __PRETTY_FUNCTION__);
+	fflush(stderr);
 
+  init_engine();
 
   while(!check_playing())
     {
@@ -623,14 +668,12 @@ void *beatflower_thread_function(void *blah)
       SDL_Delay(10);
     }
 
-  init_engine();
-
   while(!check_finished())
     {      
-      pthread_mutex_lock(&beatflower_data_mutex);
+      SDL_LockMutex(beatflower_data_mutex);
       find_color(beatflower_freq_data);
       scope(beatflower_pcm_data[0]);
-      pthread_mutex_unlock(&beatflower_data_mutex);
+      SDL_UnlockMutex(beatflower_data_mutex);
 
       if(check_playing())
         SDL_Flip(screen);      
@@ -641,7 +684,13 @@ void *beatflower_thread_function(void *blah)
       if(!blur_enable)
         black();        
     }
-  
+	
+	SDL_DestroyMutex(beatflower_status_mutex);
+	SDL_DestroyMutex(beatflower_data_mutex);
+	SDL_DestroyMutex(beatflower_config_mutex);
+
+  SDL_Quit();
+
   return NULL;
 }
 

@@ -26,6 +26,8 @@
 #include "beatflower.h"
 
 GtkWidget *beatflower_xmms_settings_win = NULL;
+static config_t     beatflower_newconfig;
+
 
 static void on_fullscreen_checkbutton_clicked(GtkCheckButton *checkbutton);
 static void on_width_spinbutton_changed(GtkSpinButton *spinbutton);
@@ -39,11 +41,11 @@ static void on_blur_checkbutton_clicked(GtkCheckButton *checkbutton);
 static void on_apply_button_clicked(GtkButton *button);
 static void on_cancel_button_clicked(GtkButton *button);
 static void on_ok_button_clicked(GtkButton *button);
-static void on_decay_spinbutton_changed(GtkSpinButton *spinbutton);
+//static void on_decay_spinbutton_changed(GtkSpinButton *spinbutton);
 static void on_zoom_checkbutton_clicked(GtkCheckButton *checkbutton);
-static void on_factor_spinbutton_changed(GtkSpinButton *spinbutton);
+//static void on_factor_spinbutton_changed(GtkSpinButton *spinbutton);
 static void on_rotate_checkbutton_clicked(GtkCheckButton *checkbutton);
-static void on_angle_spinbutton_changed(GtkSpinButton *spinbutton);
+//static void on_angle_spinbutton_changed(GtkSpinButton *spinbutton);
 
 void beatflower_xmms_settings()
 {
@@ -120,15 +122,15 @@ void beatflower_xmms_settings()
   if(beatflower_xmms_settings_win)
 	  return;
 
- /* pthread_mutex_lock(&beatflower_config_mutex);
+  SDL_LockMutex(beatflower_config_mutex);
 
-  if(!beatflower_config_loaded)*/
+  if(!beatflower_config_loaded)
     beatflower_xmms_config_load(&beatflower_config);
 
-  /*beatflower_newconfig = beatflower_config;
+  beatflower_newconfig = beatflower_config;
 
-  pthread_mutex_unlock(&beatflower_config_mutex);
-*/
+  SDL_UnlockMutex(beatflower_config_mutex); 
+
   beatflower_xmms_settings_win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_object_set_data (GTK_OBJECT (beatflower_xmms_settings_win), "beatflower_xmms_settings_win", beatflower_xmms_settings_win);
   gtk_window_set_title (GTK_WINDOW (beatflower_xmms_settings_win), "beatflower_xmms_settings_win");
@@ -179,7 +181,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (width_label), 0, 0.5);
 
-  width_spinbutton_adj = gtk_adjustment_new (320, 0, 1600, 1, 10, 10);
+  width_spinbutton_adj = gtk_adjustment_new (beatflower_newconfig.width, 0, 1600, 1, 10, 10);
   width_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (width_spinbutton_adj), 1, 0);
   gtk_widget_ref (width_spinbutton);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "width_spinbutton", width_spinbutton,
@@ -200,7 +202,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (height_label), 0, 0.5);
 
-  height_spinbutton_adj = gtk_adjustment_new (320, 0, 1400, 1, 10, 10);
+  height_spinbutton_adj = gtk_adjustment_new (beatflower_newconfig.height, 0, 1400, 1, 10, 10);
   height_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (height_spinbutton_adj), 1, 0);
   gtk_widget_ref (height_spinbutton);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "height_spinbutton", height_spinbutton,
@@ -667,19 +669,22 @@ void beatflower_xmms_settings()
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), cancel_button);
   GTK_WIDGET_SET_FLAGS (cancel_button, GTK_CAN_DEFAULT);
 
-  gtk_signal_connect (GTK_OBJECT (width_spinbutton), "changed",
-                      GTK_SIGNAL_FUNC (on_width_spinbutton_changed),
-                      NULL);
-  gtk_signal_connect (GTK_OBJECT (height_spinbutton), "changed",
-                      GTK_SIGNAL_FUNC (on_height_spinbutton_changed),
-                      NULL);
-  gtk_signal_connect (GTK_OBJECT (mode_option), "clicked",
-                      GTK_SIGNAL_FUNC (on_mode_option_selected),
-                      NULL);
+  gtk_signal_connect (GTK_OBJECT (width_spinbutton), "changed", GTK_SIGNAL_FUNC (on_width_spinbutton_changed), NULL);
+  gtk_signal_connect (GTK_OBJECT (height_spinbutton), "changed", GTK_SIGNAL_FUNC (on_height_spinbutton_changed), NULL);
+  gtk_signal_connect (GTK_OBJECT (mode_option), "clicked", GTK_SIGNAL_FUNC (on_mode_option_selected), NULL);
+  gtk_signal_connect (GTK_OBJECT (draw_option), "clicked", GTK_SIGNAL_FUNC (on_draw_option_selected), NULL);
+  gtk_signal_connect (GTK_OBJECT (samples_option), "clicked", GTK_SIGNAL_FUNC (on_samples_option_selected), NULL);
+  gtk_signal_connect (GTK_OBJECT (amplification_option), "clicked", GTK_SIGNAL_FUNC (on_amplification_option_selected), NULL);
+  gtk_signal_connect (GTK_OBJECT (offset_option), "clicked", GTK_SIGNAL_FUNC (on_offset_option_selected), NULL);
 
 	gtk_signal_connect (GTK_OBJECT (ok_button), "clicked", GTK_SIGNAL_FUNC(on_ok_button_clicked), NULL);
 	gtk_signal_connect (GTK_OBJECT (apply_button), "clicked", GTK_SIGNAL_FUNC(on_apply_button_clicked), NULL);
 	gtk_signal_connect (GTK_OBJECT (cancel_button), "clicked", GTK_SIGNAL_FUNC(on_cancel_button_clicked), NULL);
+
+	gtk_signal_connect (GTK_OBJECT (blur_checkbutton), "clicked", GTK_SIGNAL_FUNC(on_blur_checkbutton_clicked), NULL);
+	gtk_signal_connect (GTK_OBJECT (zoom_checkbutton), "clicked", GTK_SIGNAL_FUNC(on_zoom_checkbutton_clicked), NULL);
+	gtk_signal_connect (GTK_OBJECT (fullscreen_checkbutton), "clicked", GTK_SIGNAL_FUNC(on_fullscreen_checkbutton_clicked), NULL);
+
 
   /* gtk_signal_connect (GTK_OBJECT (color3), "color_set",
      GTK_SIGNAL_FUNC (on_color3_color_set),
@@ -821,13 +826,13 @@ void on_apply_button_clicked(GtkButton *button)
 {
   beatflower_xmms_config_save(&beatflower_newconfig);
  
-//  pthread_mutex_lock(&beatflower_config_mutex);
+  SDL_LockMutex(beatflower_config_mutex);
   beatflower_config = beatflower_newconfig;
-//  pthread_mutex_unlock(&beatflower_config_mutex);
+  SDL_UnlockMutex(beatflower_config_mutex);
 
-//  pthread_mutex_lock(&beatflower_status_mutex);
+  SDL_LockMutex(beatflower_status_mutex);
   if(beatflower_playing) beatflower_reset = TRUE;
-//  pthread_mutex_unlock(&beatflower_status_mutex);
+  SDL_UnlockMutex(beatflower_status_mutex);
 }
 
 void on_cancel_button_clicked(GtkButton *button)
@@ -840,7 +845,7 @@ void on_ok_button_clicked(GtkButton *button)
   on_cancel_button_clicked(button);
 }
 
-void on_decay_spinbutton_changed(GtkSpinButton *spinbutton)
+/*void on_decay_spinbutton_changed(GtkSpinButton *spinbutton)
 {
   int value;
 
@@ -851,12 +856,12 @@ void on_decay_spinbutton_changed(GtkSpinButton *spinbutton)
     beatflower_newconfig.decay = value;
   }
 }
-
+*/
 void on_zoom_checkbutton_clicked(GtkCheckButton *checkbutton)
 {
   beatflower_newconfig.zoombeat = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
 }
-
+/*
 void on_factor_spinbutton_changed(GtkSpinButton *spinbutton)
 {
   double value;
@@ -868,12 +873,12 @@ void on_factor_spinbutton_changed(GtkSpinButton *spinbutton)
     beatflower_newconfig.factor = value;
   }
 }
-
+*/
 void on_rotate_checkbutton_clicked(GtkCheckButton *checkbutton)
 {
   beatflower_newconfig.rotatebeat = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
 }
-
+/*
 void on_angle_spinbutton_changed(GtkSpinButton *spinbutton)
 {
   double value;
@@ -886,4 +891,4 @@ void on_angle_spinbutton_changed(GtkSpinButton *spinbutton)
   }
 }
 
-
+*/

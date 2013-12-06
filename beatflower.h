@@ -1,8 +1,8 @@
 #ifndef BEATFLOWER_H__
 #define BEATFLOWER_H__ 1
 
-#include <pthread.h>
 #include <stdint.h>
+#include <SDL/SDL.h>
 
 /*************************************** Types ********************************************/
 
@@ -30,14 +30,14 @@ typedef struct config_s {
 } config_t;
 
 /*************************************** Externals ********************************************/
-extern pthread_t beatflower_thread;
+extern SDL_Thread *beatflower_thread;
 
-extern pthread_mutex_t beatflower_config_mutex;
-extern pthread_mutex_t beatflower_data_mutex;
-extern pthread_mutex_t beatflower_status_mutex;
+extern SDL_mutex *beatflower_config_mutex;
+extern SDL_mutex *beatflower_data_mutex;
+extern SDL_mutex *beatflower_status_mutex;
 
 extern config_t beatflower_config;
-extern config_t beatflower_newconfig;
+//extern config_t beatflower_newconfig;
 
 extern bool beatflower_config_loaded;
 extern bool beatflower_finished;

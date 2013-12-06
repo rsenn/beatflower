@@ -30,7 +30,7 @@ void beatflower_xmms_config_load(config_t *cfg)
   ConfigFile *f;
   gchar *filename;
 
-  g_message("%s:", __func__);
+  g_message("%s:", __PRETTY_FUNCTION__);
 
   filename = g_strconcat(g_get_home_dir(), "/.xmms/config", NULL);
 	
@@ -73,7 +73,7 @@ void beatflower_xmms_config_save(config_t *cfg)
   ConfigFile *f;
 
   gchar *filename;
-  g_message("%s:", __func__);
+  g_message("%s:", __PRETTY_FUNCTION__);
 
   filename = g_strconcat(g_get_home_dir(), "/.xmms/config", NULL);
 

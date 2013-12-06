@@ -3,6 +3,13 @@ prefix = /usr
 CC = gcc
 INSTALL = install
 
+DEBUG = 1
+
+ifeq ($(DEBUG),1)
+CFLAGS := -g -ggdb -O0
+else
+CFLAGS := -g -O2 -Wall
+endif
 LDFLAGS = -shared -rdynamic
 
 PACKAGE = beatflower
