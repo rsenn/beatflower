@@ -53,10 +53,10 @@ void beatflower_xmms_config_load(config_t *cfg)
     xmms_cfg_read_int(f, PACKAGE, "samplesmode", (int *)&cfg->samples_mode);
     xmms_cfg_read_int(f, PACKAGE, "ampmode", (int *)&cfg->amplification_mode);
     xmms_cfg_read_int(f, PACKAGE, "offsetmode", (int *)&cfg->offset_mode);
-    xmms_cfg_read_boolean(f, PACKAGE, "blur", &cfg->blur);
-    xmms_cfg_read_boolean(f, PACKAGE, "decay", &cfg->decay);
+    xmms_cfg_read_int(f, PACKAGE, "decay", &cfg->decay);
     xmms_cfg_read_double(f, PACKAGE, "factor", &cfg->factor);
     xmms_cfg_read_double(f, PACKAGE, "angle", &cfg->angle);
+    xmms_cfg_read_boolean(f, PACKAGE, "blur", &cfg->blur);
     xmms_cfg_read_boolean(f, PACKAGE, "zoombeat", &cfg->zoombeat);
     xmms_cfg_read_boolean(f, PACKAGE, "rotatebeat", &cfg->rotatebeat);
 
@@ -92,7 +92,7 @@ void beatflower_xmms_config_save(config_t *cfg)
   xmms_cfg_write_int(f, PACKAGE, "ampmode", (int)cfg->amplification_mode);
   xmms_cfg_write_int(f, PACKAGE, "offsetmode", (int)cfg->offset_mode);
   xmms_cfg_write_boolean(f, PACKAGE, "blur", cfg->blur);
-  xmms_cfg_write_boolean(f, PACKAGE, "decay", cfg->decay);
+  xmms_cfg_write_int(f, PACKAGE, "decay", cfg->decay);
   xmms_cfg_write_double(f, PACKAGE, "factor", cfg->factor);
   xmms_cfg_write_double(f, PACKAGE, "angle", cfg->angle);
   xmms_cfg_write_boolean(f, PACKAGE, "zoombeat", cfg->zoombeat);
