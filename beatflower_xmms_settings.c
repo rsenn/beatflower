@@ -821,13 +821,13 @@ void on_apply_button_clicked(GtkButton *button)
 {
   beatflower_xmms_config_save(&beatflower_newconfig);
  
-  pthread_mutex_lock(&beatflower_config_mutex);
+//  pthread_mutex_lock(&beatflower_config_mutex);
   beatflower_config = beatflower_newconfig;
-  pthread_mutex_unlock(&beatflower_config_mutex);
+//  pthread_mutex_unlock(&beatflower_config_mutex);
 
-  pthread_mutex_lock(&beatflower_status_mutex);
+//  pthread_mutex_lock(&beatflower_status_mutex);
   if(beatflower_playing) beatflower_reset = TRUE;
-  pthread_mutex_unlock(&beatflower_status_mutex);
+//  pthread_mutex_unlock(&beatflower_status_mutex);
 }
 
 void on_cancel_button_clicked(GtkButton *button)
