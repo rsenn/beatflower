@@ -26,4 +26,7 @@
 
 void beatflower_xmms_settings(void);
 
+void beatflower_xmms_config_load(config_t *cfg);
+void beatflower_xmms_config_save(config_t *cfg);
+
 #endif // BEATFLOWER_XMMS_H__ 1

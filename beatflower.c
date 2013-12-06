@@ -86,10 +86,7 @@ static Uint32       decay;
 
 /********************************* Functions *****************************************/
 
-VisPlugin          *get_vplugin_info();
 void         config_set_defaults(config_t *beatflower_config);
-void         beatflower_xmms_config_load(config_t *cfg);
-void         beatflower_xmms_config_save(config_t *cfg);
 
 static void         dot_scope(short data[512]);
 static void         ball_scope(short data[512]);
