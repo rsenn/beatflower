@@ -2,6 +2,7 @@
 #define BEATFLOWER_H__ 1
 
 #include <pthread.h>
+#include <stdint.h>
 
 /*************************************** Types ********************************************/
 
@@ -43,12 +44,12 @@ extern bool beatflower_finished;
 extern bool beatflower_playing;
 extern bool beatflower_reset;
 
-extern gint16 beatflower_pcm_data[2][512];
-extern gint16 beatflower_freq_data[2][256];
+extern int16_t beatflower_pcm_data[2][512];
+extern int16_t beatflower_freq_data[2][256];
 
 void config_set_defaults(config_t *beatflower_config);
-void config_load(config_t *cfg);
-void config_save(config_t *cfg);
+void beatflower_xmms_config_load(config_t *cfg);
+void beatflower_xmms_config_save(config_t *cfg);
 void find_color(short data[2][256]);
 
 void *beatflower_thread_function(void *blah);

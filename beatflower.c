@@ -88,8 +88,8 @@ static Uint32       decay;
 
 VisPlugin          *get_vplugin_info();
 void         config_set_defaults(config_t *beatflower_config);
-void         config_load(config_t *cfg);
-void         config_save(config_t *cfg);
+void         beatflower_xmms_config_load(config_t *cfg);
+void         beatflower_xmms_config_save(config_t *cfg);
 
 static void         dot_scope(short data[512]);
 static void         ball_scope(short data[512]);
@@ -123,77 +123,6 @@ void config_set_defaults(config_t *cfg)
   cfg->angle = 1.5;
   cfg->zoombeat = FALSE;
   cfg->rotatebeat = FALSE;
-}
-
-void config_load(config_t *cfg)
-{
-  ConfigFile *f;
-  char name[512];
-  
-  sprintf(name, "%s%s", g_get_home_dir(), "/.xmms/beatflower_config");
-  
-  if(!(f = xmms_cfg_open_file(name)))
-	{
-    g_warning("Could not open XMMS beatflower config '%s', settings defaults...", name);	
-    config_set_defaults(cfg);
-
-		config_save(cfg);
-	}
-  else
-    {
-      xmms_cfg_read_boolean(f, PACKAGE, "fullscreen", &cfg->fullscreen);
-      xmms_cfg_read_int(f, PACKAGE, "width", &cfg->width);
-      xmms_cfg_read_int(f, PACKAGE, "height", &cfg->height);
-      xmms_cfg_read_int(f, PACKAGE, "colormode", (int *)&cfg->color_mode);
-      xmms_cfg_read_int(f, PACKAGE, "color1", &cfg->color1);
-      xmms_cfg_read_int(f, PACKAGE, "color2", &cfg->color2);
-      xmms_cfg_read_int(f, PACKAGE, "color3", &cfg->color3);
-      xmms_cfg_read_int(f, PACKAGE, "drawmode", (int *)&cfg->draw_mode);
-      xmms_cfg_read_int(f, PACKAGE, "samplesmode", (int *)&cfg->samples_mode);
-      xmms_cfg_read_int(f, PACKAGE, "ampmode", (int *)&cfg->amplification_mode);
-      xmms_cfg_read_int(f, PACKAGE, "offsetmode", (int *)&cfg->offset_mode);
-      xmms_cfg_read_boolean(f, PACKAGE, "blur", &cfg->blur);
-      xmms_cfg_read_boolean(f, PACKAGE, "decay", &cfg->decay);
-      xmms_cfg_read_double(f, PACKAGE, "factor", &cfg->factor);
-      xmms_cfg_read_double(f, PACKAGE, "angle", &cfg->angle);
-      xmms_cfg_read_boolean(f, PACKAGE, "zoombeat", &cfg->zoombeat);
-      xmms_cfg_read_boolean(f, PACKAGE, "rotatebeat", &cfg->rotatebeat);
-    }
-  
-  beatflower_config_loaded = TRUE;
-}
-
-void config_save(config_t *cfg)
-{
-  ConfigFile *f;
-  char name[512];
-  
-  sprintf(name, "%s%s", g_get_home_dir(), "/.xmms/beatflower_config");
-  
-  if(!(f = xmms_cfg_open_file(name)))
-    f = xmms_cfg_new();
-  
-  xmms_cfg_write_boolean(f, PACKAGE, "fullscreen", cfg->fullscreen);
-  xmms_cfg_write_int(f, PACKAGE, "width", cfg->width);
-  xmms_cfg_write_int(f, PACKAGE, "height", cfg->height);
-  xmms_cfg_write_int(f, PACKAGE, "colormode", cfg->color_mode);
-  xmms_cfg_write_int(f, PACKAGE, "color1", cfg->color1);
-  xmms_cfg_write_int(f, PACKAGE, "color2", cfg->color2);
-  xmms_cfg_write_int(f, PACKAGE, "color3", cfg->color3);
-  xmms_cfg_write_int(f, PACKAGE, "drawmode", (int)cfg->draw_mode);
-  xmms_cfg_write_int(f, PACKAGE, "samplesmode", (int)cfg->samples_mode);
-  xmms_cfg_write_int(f, PACKAGE, "ampmode", (int)cfg->amplification_mode);
-  xmms_cfg_write_int(f, PACKAGE, "offsetmode", (int)cfg->offset_mode);
-  xmms_cfg_write_boolean(f, PACKAGE, "blur", cfg->blur);
-  xmms_cfg_write_boolean(f, PACKAGE, "decay", cfg->decay);
-  xmms_cfg_write_double(f, PACKAGE, "factor", cfg->factor);
-  xmms_cfg_write_double(f, PACKAGE, "angle", cfg->angle);
-  xmms_cfg_write_boolean(f, PACKAGE, "zoombeat", cfg->zoombeat);
-  xmms_cfg_write_boolean(f, PACKAGE, "rotatebeat", cfg->rotatebeat);
-
-  g_message("Writing XMMS beatflower config to '%s' ...", name);	
-  xmms_cfg_write_file(f, name);
-  xmms_cfg_free(f);
 }
 
 static void create_color_table()
