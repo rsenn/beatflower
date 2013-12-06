@@ -21,7 +21,9 @@
    $Id: beatflower.c,v 1.4 2004/05/18 23:42:16 smoli Exp $ */
 
 #include <xmms/configfile.h>
+
 #include "beatflower.h"
+#include "beatflower_xmms.h"
 
 void beatflower_xmms_config_load(config_t *cfg)
 {
@@ -95,9 +97,17 @@ void beatflower_xmms_config_save(config_t *cfg)
   xmms_cfg_write_double(f, PACKAGE, "angle", cfg->angle);
   xmms_cfg_write_boolean(f, PACKAGE, "zoombeat", cfg->zoombeat);
   xmms_cfg_write_boolean(f, PACKAGE, "rotatebeat", cfg->rotatebeat);
-  g_message("Writing XMMS beatflower config to '%s' ...", filename);
-  xmms_cfg_write_file(f, filename);
+  
+	g_message("Writing XMMS beatflower config to '%s' ...", filename);
+  
+	xmms_cfg_write_file(f, filename);
   xmms_cfg_free(f);
 
 	g_free(filename);
+
+	if(beatflower_xmms_settings_win)
+	{
+					gtk_widget_destroy(beatflower_xmms_settings_win);
+					beatflower_xmms_settings_win = NULL;
+	}
 }
