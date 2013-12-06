@@ -157,8 +157,10 @@ void beatflower_xmms_settings()
   gtk_widget_show (fullscreen_box);
   gtk_container_add (GTK_CONTAINER (notebook), fullscreen_box);
 
+	/* GtkCheckButton - fullscreen */
   fullscreen_checkbutton = gtk_check_button_new_with_label ("Fullscreen");
-  gtk_widget_ref (fullscreen_checkbutton);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(fullscreen_checkbutton), beatflower_newconfig.fullscreen?TRUE:FALSE);
+	gtk_widget_ref (fullscreen_checkbutton);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "fullscreen_checkbutton", fullscreen_checkbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (fullscreen_checkbutton);
@@ -181,6 +183,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (width_label), 0, 0.5);
 
+	// GtkSpinButton: config.width
   width_spinbutton_adj = gtk_adjustment_new (beatflower_newconfig.width, 0, 1600, 1, 10, 10);
   width_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (width_spinbutton_adj), 1, 0);
   gtk_widget_ref (width_spinbutton);
@@ -202,6 +205,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (height_label), 0, 0.5);
 
+	// GtkSpinButton: config.height
   height_spinbutton_adj = gtk_adjustment_new (beatflower_newconfig.height, 0, 1400, 1, 10, 10);
   height_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (height_spinbutton_adj), 1, 0);
   gtk_widget_ref (height_spinbutton);
@@ -255,6 +259,7 @@ void beatflower_xmms_settings()
   gtk_widget_show (mode_label);
   gtk_box_pack_start (GTK_BOX (mode_box), mode_label, FALSE, FALSE, 4);
 
+	// GtkOptionMenu: config.color_mode
   mode_option = gtk_option_menu_new ();
   gtk_widget_ref (mode_option);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "mode_option", mode_option,
@@ -276,6 +281,11 @@ void beatflower_xmms_settings()
   gtk_widget_show (glade_menuitem);
   gtk_menu_append (GTK_MENU (mode_option_menu), glade_menuitem);
   gtk_option_menu_set_menu (GTK_OPTION_MENU (mode_option), mode_option_menu);
+
+	gtk_menu_set_active(GTK_MENU(mode_option_menu), beatflower_newconfig.color_mode);
+
+
+
 
   color_table = gtk_table_new (3, 2, FALSE);
   gtk_widget_ref (color_table);
@@ -365,6 +375,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (draw_label), 1, 0);
 
+	// GtkOptionMenu: config.draw_mode
   draw_option = gtk_option_menu_new ();
   gtk_widget_ref (draw_option);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "draw_option", draw_option,
@@ -388,6 +399,10 @@ void beatflower_xmms_settings()
   gtk_menu_append (GTK_MENU (draw_option_menu), glade_menuitem);
   gtk_option_menu_set_menu (GTK_OPTION_MENU (draw_option), draw_option_menu);
 
+	gtk_menu_set_active(GTK_MENU(draw_option_menu), beatflower_newconfig.draw_mode);
+
+
+
   samples_label = gtk_label_new ("Samples");
   gtk_widget_ref (samples_label);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "samples_label", samples_label,
@@ -398,6 +413,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (samples_label), 1, 0.5);
 
+	// GtkOptionMenu: config.samples_mode
   samples_option = gtk_option_menu_new ();
   gtk_widget_ref (samples_option);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "samples_option", samples_option,
@@ -424,6 +440,11 @@ void beatflower_xmms_settings()
   gtk_menu_append (GTK_MENU (samples_option_menu), glade_menuitem);
   gtk_option_menu_set_menu (GTK_OPTION_MENU (samples_option), samples_option_menu);
 
+	gtk_menu_set_active(GTK_MENU(samples_option_menu), beatflower_newconfig.samples_mode);
+
+
+
+
   amplification_label = gtk_label_new ("Amplification");
   gtk_widget_ref (amplification_label);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "amplification_label", amplification_label,
@@ -434,6 +455,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (amplification_label), 1, 0.5);
 
+	// GtkOptionMenu: config.amplification_mode
   amplification_option = gtk_option_menu_new ();
   gtk_widget_ref (amplification_option);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "amplification_option", amplification_option,
@@ -454,6 +476,11 @@ void beatflower_xmms_settings()
   gtk_menu_append (GTK_MENU (amplification_option_menu), glade_menuitem);
   gtk_option_menu_set_menu (GTK_OPTION_MENU (amplification_option), amplification_option_menu);
 
+	gtk_menu_set_active(GTK_MENU(amplification_option_menu), beatflower_newconfig.amplification_mode);
+
+
+
+
   offset_label = gtk_label_new ("Offset");
   gtk_widget_ref (offset_label);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "offset_label", offset_label,
@@ -464,6 +491,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (offset_label), 1, 0.5);
 
+	// GtkOptionMenu: config.offset_mode
   offset_option = gtk_option_menu_new ();
   gtk_widget_ref (offset_option);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "offset_option", offset_option,
@@ -483,6 +511,12 @@ void beatflower_xmms_settings()
   gtk_widget_show (glade_menuitem);
   gtk_menu_append (GTK_MENU (offset_option_menu), glade_menuitem);
   gtk_option_menu_set_menu (GTK_OPTION_MENU (offset_option), offset_option_menu);
+
+	gtk_menu_set_active(GTK_MENU(offset_option_menu), beatflower_newconfig.offset_mode);
+
+
+
+
 
   scope_label = gtk_label_new ("Scope");
   gtk_widget_ref (scope_label);
@@ -527,13 +561,17 @@ void beatflower_xmms_settings()
   gtk_widget_show (decay_label);
   gtk_box_pack_start (GTK_BOX (decay_box), decay_label, FALSE, FALSE, 4);
 
-  decay_spinbutton_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
+
+  // GtkSpinButton: config.decay
+  decay_spinbutton_adj = gtk_adjustment_new (beatflower_newconfig.decay, 0, 100, 1, 10, 10);
   decay_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (decay_spinbutton_adj), 1, 0);
   gtk_widget_ref (decay_spinbutton);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "decay_spinbutton", decay_spinbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_box_pack_start (GTK_BOX (decay_box), decay_spinbutton, TRUE, TRUE, 0);
   gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (decay_spinbutton), TRUE);
+
+
 
   special_box = gtk_hbox_new (FALSE, 0);
   gtk_widget_ref (special_box);
@@ -556,12 +594,17 @@ void beatflower_xmms_settings()
   gtk_widget_show (zoom_box);
   gtk_container_add (GTK_CONTAINER (zoom_frame), zoom_box);
 
+  // GtkCheckButton: config.zoom
   zoom_checkbutton = gtk_check_button_new_with_label ("Zoom in/out by beat");
   gtk_widget_ref (zoom_checkbutton);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "zoom_checkbutton", zoom_checkbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (zoom_checkbutton);
   gtk_box_pack_start (GTK_BOX (zoom_box), zoom_checkbutton, FALSE, FALSE, 4);
+
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(zoom_checkbutton), beatflower_newconfig.zoombeat ? TRUE:FALSE);
+
+
 
   zoom_rate_box = gtk_hbox_new (FALSE, 0);
   gtk_widget_ref (zoom_rate_box);
@@ -577,7 +620,8 @@ void beatflower_xmms_settings()
   gtk_widget_show (zoom_rate_label);
   gtk_box_pack_start (GTK_BOX (zoom_rate_box), zoom_rate_label, FALSE, FALSE, 4);
 
-  factor_spinbutton_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
+  // GtkSpinButton: config.factor
+  factor_spinbutton_adj = gtk_adjustment_new (beatflower_newconfig.factor, 0, 100, 1, 10, 10);
   factor_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (factor_spinbutton_adj), 1, 3);
   gtk_widget_ref (factor_spinbutton);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "factor_spinbutton", factor_spinbutton,
@@ -587,6 +631,8 @@ void beatflower_xmms_settings()
   gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (factor_spinbutton), TRUE);
   gtk_spin_button_set_update_policy (GTK_SPIN_BUTTON (factor_spinbutton), GTK_UPDATE_IF_VALID);
 
+
+  
   rotate_frame = gtk_frame_new ("Rotate");
   gtk_widget_ref (rotate_frame);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "rotate_frame", rotate_frame,
@@ -601,12 +647,19 @@ void beatflower_xmms_settings()
   gtk_widget_show (rotate_box);
   gtk_container_add (GTK_CONTAINER (rotate_frame), rotate_box);
 
+	// GtkCheckButton: config.rotate
   rotate_checkbutton = gtk_check_button_new_with_label ("Rotate left/right by beat");
   gtk_widget_ref (rotate_checkbutton);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "rotate_checkbutton", rotate_checkbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (rotate_checkbutton);
   gtk_box_pack_start (GTK_BOX (rotate_box), rotate_checkbutton, FALSE, FALSE, 4);
+
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rotate_checkbutton), beatflower_newconfig.rotatebeat ? TRUE:FALSE);
+
+
+
+
 
   angle_box = gtk_hbox_new (FALSE, 0);
   gtk_widget_ref (angle_box);
@@ -622,13 +675,19 @@ void beatflower_xmms_settings()
   gtk_widget_show (angle_label);
   gtk_box_pack_start (GTK_BOX (angle_box), angle_label, FALSE, FALSE, 4);
 
-  angle_spinbutton_adj = gtk_adjustment_new (1, -180, 180, 1, 10, 10);
+  // GtkSpinButton: config.angle
+  angle_spinbutton_adj = gtk_adjustment_new (beatflower_newconfig.angle, -180, 180, 1, 10, 10);
   angle_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (angle_spinbutton_adj), 1, 3);
   gtk_widget_ref (angle_spinbutton);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "angle_spinbutton", angle_spinbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (angle_spinbutton);
   gtk_box_pack_start (GTK_BOX (angle_box), angle_spinbutton, TRUE, TRUE, 4);
+
+
+
+
+
 
   blur_label = gtk_label_new ("Blur");
   gtk_widget_ref (blur_label);
@@ -671,7 +730,9 @@ void beatflower_xmms_settings()
 
   gtk_signal_connect (GTK_OBJECT (width_spinbutton), "changed", GTK_SIGNAL_FUNC (on_width_spinbutton_changed), NULL);
   gtk_signal_connect (GTK_OBJECT (height_spinbutton), "changed", GTK_SIGNAL_FUNC (on_height_spinbutton_changed), NULL);
-  gtk_signal_connect (GTK_OBJECT (mode_option), "clicked", GTK_SIGNAL_FUNC (on_mode_option_selected), NULL);
+  //gtk_signal_connect (GTK_OBJECT (fullscreen_checkbutton), "toggled", GTK_SIGNAL_FUNC (on_fullscreen_checkbutton_changed), NULL);
+
+	gtk_signal_connect (GTK_OBJECT (mode_option), "clicked", GTK_SIGNAL_FUNC (on_mode_option_selected), NULL);
   gtk_signal_connect (GTK_OBJECT (draw_option), "clicked", GTK_SIGNAL_FUNC (on_draw_option_selected), NULL);
   gtk_signal_connect (GTK_OBJECT (samples_option), "clicked", GTK_SIGNAL_FUNC (on_samples_option_selected), NULL);
   gtk_signal_connect (GTK_OBJECT (amplification_option), "clicked", GTK_SIGNAL_FUNC (on_amplification_option_selected), NULL);
