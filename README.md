@@ -13,6 +13,7 @@ Currently runs on only on the xmms music player (v1.2.x) on the following Linux 
 Install the SDL-devel and xmms-devel packages.
 Then, within the source directory of beatflower:
 
+
   make
   sudo make install
   
