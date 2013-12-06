@@ -30,6 +30,8 @@
 #include <gtk/gtk.h>
 #include <SDL.h>
 
+#include "beatflower.h"
+
 /************************************* Constants ******************************************/
 
 #define M_2PI 6.2831853071795864769252867665590058
@@ -42,47 +44,22 @@
 #define GREEN_SHIFT  8
 #define BLUE_SHIFT   0
 
-/*************************************** Types ********************************************/
-
-typedef int bool;
-
-/* configuration structure */
-typedef struct config_s {
-  bool         fullscreen;
-  int          width;
-  int          height;
-  unsigned int color1;
-  unsigned int color2;
-  unsigned int color3;
-  bool         blur;       /* do blur */
-  int          decay;      /* decay value */
-  double       factor;     /* zoom factor */
-  double       angle;      /* rotation angle */
-  bool         zoombeat;   /* zoom by beat */
-  bool         rotatebeat; /* rotate by beat */
-  enum { COLOR_2_GRADIENT = 0, COLOR_3_GRADIENT = 1, COLOR_RANDOM = 2, COLOR_FREQ  = 3 }                  color_mode; 
-  enum { DRAW_DOTS        = 0, DRAW_BALLS       = 1, DRAW_CIRCLE  = 2, DRAW_LINES  = 3 }                  draw_mode;
-  enum { SAMPLES_32       = 0, SAMPLES_64       = 1, SAMPLES_128  = 2, SAMPLES_256 = 3, SAMPLES_512 = 4 } samples_mode;
-  enum { AMP_HALF         = 0, AMP_FULL         = 1, AMP_DOUBLE   = 2 }                                   amplification_mode;
-  enum { OFFSET_MINUS     = 0, OFFSET_NULL      = 1, OFFSET_PLUS  = 2 }                                   offset_mode;
-} config_t;
-
 /************************************* Variables ****************************************/
 
 static VisPlugin    beatflower;
-static config_t     config;
-static config_t     newconfig;
-pthread_mutex_t     status_mutex  = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t     data_mutex    = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t     config_mutex  = PTHREAD_MUTEX_INITIALIZER;
-static bool         beatflower_config_loaded = FALSE;
+config_t     beatflower_config;
+config_t     beatflower_newconfig;
+pthread_mutex_t     beatflower_status_mutex  = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t     beatflower_data_mutex    = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t     beatflower_config_mutex  = PTHREAD_MUTEX_INITIALIZER;
+bool         beatflower_config_loaded = FALSE;
 /*static bool         reinit        = FALSE;*/
-static bool         beatflower_playing;
-static bool         beatflower_finished;            /* some status variables... */
-static bool         reset;
-static pthread_t    thread;       /* thread that does the drawing */
-static gint16       pcm_data[2][512];    /* 2 channel pcm and freq data */
-static gint16       freq_data[2][256];
+bool         beatflower_playing;
+bool         beatflower_finished;            /* some status variables... */
+bool         beatflower_reset;
+pthread_t    beatflower_thread;       /* beatflower_thread that does the drawing */
+gint16       beatflower_pcm_data[2][512];    /* 2 channel pcm and freq data */
+gint16       beatflower_freq_data[2][256];
 static SDL_Surface *screen;
 static unsigned int color_table[512];
 static unsigned int samples;
@@ -110,9 +87,9 @@ static Uint32       decay;
 /********************************* Functions *****************************************/
 
 VisPlugin          *get_vplugin_info();
-static void         config_set_defaults(config_t *config);
-static void         config_load(config_t *cfg);
-static void         config_save(config_t *cfg);
+void         config_set_defaults(config_t *beatflower_config);
+void         config_load(config_t *cfg);
+void         config_save(config_t *cfg);
 
 static void         dot_scope(short data[512]);
 static void         ball_scope(short data[512]);
@@ -127,25 +104,25 @@ static void         init_transform();
 static bool         check_finished();
 
 
-void config_set_defaults(config_t *config)
+void config_set_defaults(config_t *beatflower_config)
 {
-  config->width  = 320;
-  config->height = 320;
-  config->fullscreen = FALSE;
-  config->color_mode = COLOR_3_GRADIENT;
-  config->color1 = 0x800000;
-  config->color2 = 0xff0000;
-  config->color3 = 0xffff00;
-  config->draw_mode = DRAW_CIRCLE;
-  config->samples_mode = SAMPLES_512;
-  config->amplification_mode = AMP_FULL;
-  config->offset_mode = OFFSET_NULL;
-  config->blur = TRUE;
-  config->decay = 2;
-  config->factor = 0.95;
-  config->angle = 1.5;
-  config->zoombeat = FALSE;
-  config->rotatebeat = FALSE;
+  beatflower_config->width  = 320;
+  beatflower_config->height = 320;
+  beatflower_config->fullscreen = FALSE;
+  beatflower_config->color_mode = COLOR_3_GRADIENT;
+  beatflower_config->color1 = 0x800000;
+  beatflower_config->color2 = 0xff0000;
+  beatflower_config->color3 = 0xffff00;
+  beatflower_config->draw_mode = DRAW_CIRCLE;
+  beatflower_config->samples_mode = SAMPLES_512;
+  beatflower_config->amplification_mode = AMP_FULL;
+  beatflower_config->offset_mode = OFFSET_NULL;
+  beatflower_config->blur = TRUE;
+  beatflower_config->decay = 2;
+  beatflower_config->factor = 0.95;
+  beatflower_config->angle = 1.5;
+  beatflower_config->zoombeat = FALSE;
+  beatflower_config->rotatebeat = FALSE;
 }
 
 void config_load(config_t *cfg)
@@ -153,7 +130,7 @@ void config_load(config_t *cfg)
   ConfigFile *f;
   char name[512];
   
-  sprintf(name, "%s%s", g_get_home_dir(), "/.xmms/config");
+  sprintf(name, "%s%s", g_get_home_dir(), "/.xmms/beatflower_config");
   
   if(!(f = xmms_cfg_open_file(name)))
     config_set_defaults(cfg);
@@ -186,7 +163,7 @@ void config_save(config_t *cfg)
   ConfigFile *f;
   char name[512];
   
-  sprintf(name, "%s%s", g_get_home_dir(), "/.xmms/config");
+  sprintf(name, "%s%s", g_get_home_dir(), "/.xmms/beatflower_config");
   
   if(!(f = xmms_cfg_open_file(name)))
     f = xmms_cfg_new();
@@ -356,9 +333,9 @@ static void create_sine_tables()
 /* initialize the beatflower engine */
 __inline__ static void init_engine()
 {
-  pthread_mutex_lock(&config_mutex);
+  pthread_mutex_lock(&beatflower_config_mutex);
 
-  screen = SDL_SetVideoMode(config.width, config.height, 32, SDL_HWSURFACE);
+  screen = SDL_SetVideoMode(beatflower_config.width, beatflower_config.height, 32, SDL_HWSURFACE);
   
   pixels = screen->pixels;
   pitch  = screen->pitch;
@@ -366,32 +343,32 @@ __inline__ static void init_engine()
   height = screen->h;
   radius = (width > height ? height >> 1 : width >> 1);
 
-  samples = (config.samples_mode == SAMPLES_32  ? 32  :
-            (config.samples_mode == SAMPLES_64  ? 64  :
-            (config.samples_mode == SAMPLES_128 ? 128 :
-            (config.samples_mode == SAMPLES_256 ? 256 : 512))));
+  samples = (beatflower_config.samples_mode == SAMPLES_32  ? 32  :
+            (beatflower_config.samples_mode == SAMPLES_64  ? 64  :
+            (beatflower_config.samples_mode == SAMPLES_128 ? 128 :
+            (beatflower_config.samples_mode == SAMPLES_256 ? 256 : 512))));
   
-  scope = (config.draw_mode == DRAW_DOTS   ? &dot_scope    :
-          (config.draw_mode == DRAW_BALLS  ? &ball_scope   :
-          (config.draw_mode == DRAW_CIRCLE ? &circle_scope : &line_scope)));
+  scope = (beatflower_config.draw_mode == DRAW_DOTS   ? &dot_scope    :
+          (beatflower_config.draw_mode == DRAW_BALLS  ? &ball_scope   :
+          (beatflower_config.draw_mode == DRAW_CIRCLE ? &circle_scope : &line_scope)));
   
-  factor = config.factor;
-  angle = config.angle * M_2PI / 360;
-  blur_enable = config.blur;
-  color_mode = config.color_mode;
-  amp_mode = config.amplification_mode;
-  offset_mode = (config.offset_mode == OFFSET_MINUS ? -32768 :
-                (config.offset_mode == OFFSET_PLUS  ?  32768 : 0));
-  color1 = config.color1;
-  color2 = config.color2;
-  color3 = config.color3;
-  decay = config.decay;
+  factor = beatflower_config.factor;
+  angle = beatflower_config.angle * M_2PI / 360;
+  blur_enable = beatflower_config.blur;
+  color_mode = beatflower_config.color_mode;
+  amp_mode = beatflower_config.amplification_mode;
+  offset_mode = (beatflower_config.offset_mode == OFFSET_MINUS ? -32768 :
+                (beatflower_config.offset_mode == OFFSET_PLUS  ?  32768 : 0));
+  color1 = beatflower_config.color1;
+  color2 = beatflower_config.color2;
+  color3 = beatflower_config.color3;
+  decay = beatflower_config.decay;
   
   create_sine_tables();
   init_transform();
   create_color_table();
   
-  pthread_mutex_unlock(&config_mutex);
+  pthread_mutex_unlock(&beatflower_config_mutex);
 }
   
 __inline__ static Uint32 average(Uint32 c1, Uint32 c2,
@@ -666,17 +643,17 @@ static bool check_finished()
 {
   bool ret;
   
-  pthread_mutex_lock(&status_mutex);
+  pthread_mutex_lock(&beatflower_status_mutex);
   
   ret = beatflower_finished;
   
-  if(reset)
+  if(beatflower_reset)
     {
-      reset = FALSE;      
+      beatflower_reset = FALSE;      
       init_engine();
     }
   
-  pthread_mutex_unlock(&status_mutex);
+  pthread_mutex_unlock(&beatflower_status_mutex);
     
   return ret;
 }
@@ -685,15 +662,15 @@ static bool check_playing()
 {
   bool ret;
   
-  pthread_mutex_lock(&status_mutex);
+  pthread_mutex_lock(&beatflower_status_mutex);
   ret = beatflower_playing;
-  pthread_mutex_unlock(&status_mutex);
+  pthread_mutex_unlock(&beatflower_status_mutex);
   
   return ret;
 }
 
 
-void *beatflower_thread(void *blah)
+void *beatflower_thread_function(void *blah)
 { 
   while(!check_playing())
     {
@@ -707,10 +684,10 @@ void *beatflower_thread(void *blah)
 
   while(!check_finished())
     {      
-      pthread_mutex_lock(&data_mutex);
-      find_color(freq_data);
-      scope(pcm_data[0]);
-      pthread_mutex_unlock(&data_mutex);
+      pthread_mutex_lock(&beatflower_data_mutex);
+      find_color(beatflower_freq_data);
+      scope(beatflower_pcm_data[0]);
+      pthread_mutex_unlock(&beatflower_data_mutex);
 
       if(check_playing())
         SDL_Flip(screen);      
@@ -723,194 +700,5 @@ void *beatflower_thread(void *blah)
     }
   
   return NULL;
-}
-
-void on_fullscreen_checkbutton_clicked(GtkCheckButton *checkbutton)
-{
-  newconfig.fullscreen = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
-}
-
-void on_width_spinbutton_changed(GtkSpinButton *spinbutton)
-{
-  int value;
-  
-  value = gtk_spin_button_get_value_as_int(spinbutton);
-  
-  if(value > 160 && value < 1600)
-    {
-      newconfig.width = value;
-    }
-}
-  
-void on_height_spinbutton_changed(GtkSpinButton *spinbutton)
-{
-  int value;
-  
-  value = gtk_spin_button_get_value_as_int(spinbutton);
-  
-  if(value > 160 && value < 1400)
-    {
-      newconfig.height = value;
-    }
-}
-
-/*void on_color1_color_set(GnomeColorPicker *gnomecolorpicker,
-                         guint             arg1,
-                         guint             arg2,
-                         guint             arg3,
-                         guint             arg4)
-{  
-  unsigned char red, green, blue;
-  
-  gnome_color_picker_get_i8(gnomecolorpicker, &red, &green, &blue, NULL);
-  newconfig.color1 = (red << RED_SHIFT) | (green << GREEN_SHIFT) | (blue << BLUE_SHIFT);
-}
-
-void on_color2_color_set(GnomeColorPicker *gnomecolorpicker,
-                         guint             arg1,
-                         guint             arg2,
-                         guint             arg3,
-                         guint             arg4)
-{  
-  unsigned char red, green, blue;
-  
-  gnome_color_picker_get_i8(gnomecolorpicker, &red, &green, &blue, NULL);
-  newconfig.color2 = (red << RED_SHIFT) | (green << GREEN_SHIFT) | (blue << BLUE_SHIFT);
-}
-
-void on_color3_color_set(GnomeColorPicker *gnomecolorpicker,
-                         guint             arg1,
-                         guint             arg2,
-                         guint             arg3,
-                         guint             arg4)
-{  
-  unsigned char red, green, blue;
-  
-  gnome_color_picker_get_i8(gnomecolorpicker, &red, &green, &blue, NULL);
-  newconfig.color3 = (red << RED_SHIFT) | (green << GREEN_SHIFT) | (blue << BLUE_SHIFT);
-}*/
-
-void on_mode_option_selected(GtkMenuShell *shell)
-{
-  GtkWidget *active;
-  gint32     index;
-  
-  active = gtk_menu_get_active(GTK_MENU(shell));
-  index = g_list_index(shell->children, active);
-  newconfig.color_mode = index;
-}   
-  
-void on_draw_option_selected(GtkMenuShell *shell)
-{
-  GtkWidget *active;
-  gint32     index;
-  
-  active = gtk_menu_get_active(GTK_MENU(shell));
-  index = g_list_index(shell->children, active);  
-  newconfig.draw_mode = index;
-}   
-  
-void on_samples_option_selected(GtkMenuShell *shell)
-{
-  GtkWidget *active;
-  gint32     index;
-  
-  active = gtk_menu_get_active(GTK_MENU (shell));
-  index = g_list_index(shell->children, active);  
-  newconfig.samples_mode = index;
-}   
-  
-void on_amplification_option_selected(GtkMenuShell *shell)
-{
-  GtkWidget *active;
-  gint32     index;
-  
-  active = gtk_menu_get_active (GTK_MENU (shell));
-  index = g_list_index (shell->children, active);  
-  newconfig.amplification_mode = index;
-}   
-  
-void on_offset_option_selected(GtkMenuShell *shell)
-{
-  GtkWidget *active;
-  gint32     index;
-  
-  active = gtk_menu_get_active (GTK_MENU (shell));
-  index = g_list_index (shell->children, active);  
-  newconfig.offset_mode = index;
-}   
-
-void on_blur_checkbutton_clicked(GtkCheckButton *checkbutton)
-{
-  newconfig.blur = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
-}
-
-void on_apply_button_clicked(GtkButton *button)
-{
-  config_save(&newconfig);
-
-  pthread_mutex_lock(&config_mutex);
-  config = newconfig;
-  pthread_mutex_unlock(&config_mutex);
-  
-  pthread_mutex_lock(&status_mutex);
-  if(beatflower_playing) reset = TRUE;
-  pthread_mutex_unlock(&status_mutex);
-}
-
-void on_cancel_button_clicked(GtkButton *button)
-{
-}
-
-void on_ok_button_clicked(GtkButton *button)
-{
-  on_apply_button_clicked(button);
-  on_cancel_button_clicked(button);
-}
-
-void on_decay_spinbutton_changed(GtkSpinButton *spinbutton)
-{  
-  int value;
-  
-  value = gtk_spin_button_get_value_as_int(spinbutton);
-  
-  if(value > 0)
-    {
-      newconfig.decay = value;
-    }
-}
-
-void on_zoom_checkbutton_clicked(GtkCheckButton *checkbutton)
-{
-  newconfig.zoombeat = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
-}
-
-void on_factor_spinbutton_changed(GtkSpinButton *spinbutton)
-{  
-  double value;
-  
-  value = gtk_spin_button_get_value_as_float(spinbutton);
-  
-  if(value > 0)
-    {
-      newconfig.factor = value;
-    }
-}
-
-void on_rotate_checkbutton_clicked(GtkCheckButton *checkbutton)
-{
-  newconfig.rotatebeat = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
-}
-
-void on_angle_spinbutton_changed(GtkSpinButton *spinbutton)
-{  
-  double value;
-  
-  value = gtk_spin_button_get_value_as_float(spinbutton);
-  
-  if(value <= 180 && value >= -180)
-    {
-      newconfig.angle = value;
-    }
 }
 
