@@ -104,25 +104,25 @@ static void         init_transform();
 static bool         check_finished();
 
 
-void config_set_defaults(config_t *beatflower_config)
+void config_set_defaults(config_t *cfg)
 {
-  beatflower_config->width  = 320;
-  beatflower_config->height = 320;
-  beatflower_config->fullscreen = FALSE;
-  beatflower_config->color_mode = COLOR_3_GRADIENT;
-  beatflower_config->color1 = 0x800000;
-  beatflower_config->color2 = 0xff0000;
-  beatflower_config->color3 = 0xffff00;
-  beatflower_config->draw_mode = DRAW_CIRCLE;
-  beatflower_config->samples_mode = SAMPLES_512;
-  beatflower_config->amplification_mode = AMP_FULL;
-  beatflower_config->offset_mode = OFFSET_NULL;
-  beatflower_config->blur = TRUE;
-  beatflower_config->decay = 2;
-  beatflower_config->factor = 0.95;
-  beatflower_config->angle = 1.5;
-  beatflower_config->zoombeat = FALSE;
-  beatflower_config->rotatebeat = FALSE;
+  cfg->width  = 320;
+  cfg->height = 320;
+  cfg->fullscreen = FALSE;
+  cfg->color_mode = COLOR_3_GRADIENT;
+  cfg->color1 = 0x800000;
+  cfg->color2 = 0xff0000;
+  cfg->color3 = 0xffff00;
+  cfg->draw_mode = DRAW_CIRCLE;
+  cfg->samples_mode = SAMPLES_512;
+  cfg->amplification_mode = AMP_FULL;
+  cfg->offset_mode = OFFSET_NULL;
+  cfg->blur = TRUE;
+  cfg->decay = 2;
+  cfg->factor = 0.95;
+  cfg->angle = 1.5;
+  cfg->zoombeat = FALSE;
+  cfg->rotatebeat = FALSE;
 }
 
 void config_load(config_t *cfg)
@@ -136,6 +136,8 @@ void config_load(config_t *cfg)
 	{
     g_warning("Could not open XMMS beatflower config '%s', settings defaults...", name);	
     config_set_defaults(cfg);
+
+		config_save(cfg);
 	}
   else
     {

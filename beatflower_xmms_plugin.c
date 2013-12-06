@@ -28,16 +28,16 @@
 
 #include "beatflower.h"
 
-void  beatflower_xmms_init();
-void  beatflower_xmms_cleanup();
-void  beatflower_xmms_about();
-void  beatflower_xmms_configure();
-void  beatflower_xmms_playback_start();
-void  beatflower_xmms_playback_stop();
-void  beatflower_xmms_render_pcm(short data[2][512]);
-void  beatflower_xmms_render_freq(short data[2][256]);
-void  beatflower_xmms_about();
-
+static void beatflower_xmms_init();
+static void beatflower_xmms_cleanup();
+static void beatflower_xmms_about();
+static void beatflower_xmms_configure();
+static void beatflower_xmms_playback_start();
+static void beatflower_xmms_playback_stop();
+static void beatflower_xmms_render_pcm(short data[2][512]);
+static void beatflower_xmms_render_freq(short data[2][256]);
+static void beatflower_xmms_about();
+ 
 static VisPlugin beatflower = {
  NULL,
  NULL,
@@ -117,197 +117,23 @@ void beatflower_xmms_render_freq(short data[2][256])
  pthread_mutex_unlock(&beatflower_data_mutex);
 }
 
-
-
-void on_fullscreen_checkbutton_clicked(GtkCheckButton *checkbutton)
-{
-  beatflower_newconfig.fullscreen = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
-}
-
-void on_width_spinbutton_changed(GtkSpinButton *spinbutton)
-{
-  int value;
-  
-  value = gtk_spin_button_get_value_as_int(spinbutton);
-  
-  if(value > 160 && value < 1600)
-    {
-      beatflower_newconfig.width = value;
-    }
-}
-  
-void on_height_spinbutton_changed(GtkSpinButton *spinbutton)
-{
-  int value;
-  
-  value = gtk_spin_button_get_value_as_int(spinbutton);
-  
-  if(value > 160 && value < 1400)
-    {
-      beatflower_newconfig.height = value;
-    }
-}
-
-/*void on_color1_color_set(GnomeColorPicker *gnomecolorpicker,
-                         guint             arg1,
-                         guint             arg2,
-                         guint             arg3,
-                         guint             arg4)
-{  
-  unsigned char red, green, blue;
-  
-  gnome_color_picker_get_i8(gnomecolorpicker, &red, &green, &blue, NULL);
-  beatflower_newconfig.color1 = (red << RED_SHIFT) | (green << GREEN_SHIFT) | (blue << BLUE_SHIFT);
-}
-
-void on_color2_color_set(GnomeColorPicker *gnomecolorpicker,
-                         guint             arg1,
-                         guint             arg2,
-                         guint             arg3,
-                         guint             arg4)
-{  
-  unsigned char red, green, blue;
-  
-  gnome_color_picker_get_i8(gnomecolorpicker, &red, &green, &blue, NULL);
-  beatflower_newconfig.color2 = (red << RED_SHIFT) | (green << GREEN_SHIFT) | (blue << BLUE_SHIFT);
-}
-
-void on_color3_color_set(GnomeColorPicker *gnomecolorpicker,
-                         guint             arg1,
-                         guint             arg2,
-                         guint             arg3,
-                         guint             arg4)
-{  
-  unsigned char red, green, blue;
-  
-  gnome_color_picker_get_i8(gnomecolorpicker, &red, &green, &blue, NULL);
-  beatflower_newconfig.color3 = (red << RED_SHIFT) | (green << GREEN_SHIFT) | (blue << BLUE_SHIFT);
-}*/
-
-void on_mode_option_selected(GtkMenuShell *shell)
-{
-  GtkWidget *active;
-  gint32     index;
-  
-  active = gtk_menu_get_active(GTK_MENU(shell));
-  index = g_list_index(shell->children, active);
-  beatflower_newconfig.color_mode = index;
-}   
-  
-void on_draw_option_selected(GtkMenuShell *shell)
-{
-  GtkWidget *active;
-  gint32     index;
-  
-  active = gtk_menu_get_active(GTK_MENU(shell));
-  index = g_list_index(shell->children, active);  
-  beatflower_newconfig.draw_mode = index;
-}   
-  
-void on_samples_option_selected(GtkMenuShell *shell)
-{
-  GtkWidget *active;
-  gint32     index;
-  
-  active = gtk_menu_get_active(GTK_MENU (shell));
-  index = g_list_index(shell->children, active);  
-  beatflower_newconfig.samples_mode = index;
-}   
-  
-void on_amplification_option_selected(GtkMenuShell *shell)
-{
-  GtkWidget *active;
-  gint32     index;
-  
-  active = gtk_menu_get_active (GTK_MENU (shell));
-  index = g_list_index (shell->children, active);  
-  beatflower_newconfig.amplification_mode = index;
-}   
-  
-void on_offset_option_selected(GtkMenuShell *shell)
-{
-  GtkWidget *active;
-  gint32     index;
-  
-  active = gtk_menu_get_active (GTK_MENU (shell));
-  index = g_list_index (shell->children, active);  
-  beatflower_newconfig.offset_mode = index;
-}   
-
-void on_blur_checkbutton_clicked(GtkCheckButton *checkbutton)
-{
-  beatflower_newconfig.blur = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
-}
-
-void on_apply_button_clicked(GtkButton *button)
-{
-  config_save(&beatflower_newconfig);
-
-  pthread_mutex_lock(&beatflower_config_mutex);
-  beatflower_config = beatflower_newconfig;
-  pthread_mutex_unlock(&beatflower_config_mutex);
-  
-  pthread_mutex_lock(&beatflower_status_mutex);
-  if(beatflower_playing) beatflower_reset = TRUE;
-  pthread_mutex_unlock(&beatflower_status_mutex);
-}
-
-void on_cancel_button_clicked(GtkButton *button)
-{
-}
-
-void on_ok_button_clicked(GtkButton *button)
-{
-  on_apply_button_clicked(button);
-  on_cancel_button_clicked(button);
-}
-
-void on_decay_spinbutton_changed(GtkSpinButton *spinbutton)
-{  
-  int value;
-  
-  value = gtk_spin_button_get_value_as_int(spinbutton);
-  
-  if(value > 0)
-    {
-      beatflower_newconfig.decay = value;
-    }
-}
-
-void on_zoom_checkbutton_clicked(GtkCheckButton *checkbutton)
-{
-  beatflower_newconfig.zoombeat = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
-}
-
-void on_factor_spinbutton_changed(GtkSpinButton *spinbutton)
-{  
-  double value;
-  
-  value = gtk_spin_button_get_value_as_float(spinbutton);
-  
-  if(value > 0)
-    {
-      beatflower_newconfig.factor = value;
-    }
-}
-
-void on_rotate_checkbutton_clicked(GtkCheckButton *checkbutton)
-{
-  beatflower_newconfig.rotatebeat = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
-}
-
-void on_angle_spinbutton_changed(GtkSpinButton *spinbutton)
-{  
-  double value;
-  
-  value = gtk_spin_button_get_value_as_float(spinbutton);
-  
-  if(value <= 180 && value >= -180)
-    {
-      beatflower_newconfig.angle = value;
-    }
-}
-
+static void on_fullscreen_checkbutton_clicked(GtkCheckButton *checkbutton);
+static void on_width_spinbutton_changed(GtkSpinButton *spinbutton);
+static void on_height_spinbutton_changed(GtkSpinButton *spinbutton);
+static void on_mode_option_selected(GtkMenuShell *shell);
+static void on_draw_option_selected(GtkMenuShell *shell);
+static void on_samples_option_selected(GtkMenuShell *shell);
+static void on_amplification_option_selected(GtkMenuShell *shell);
+static void on_offset_option_selected(GtkMenuShell *shell);
+static void on_blur_checkbutton_clicked(GtkCheckButton *checkbutton);
+static void on_apply_button_clicked(GtkButton *button);
+static void on_cancel_button_clicked(GtkButton *button);
+static void on_ok_button_clicked(GtkButton *button);
+static void on_decay_spinbutton_changed(GtkSpinButton *spinbutton);
+static void on_zoom_checkbutton_clicked(GtkCheckButton *checkbutton);
+static void on_factor_spinbutton_changed(GtkSpinButton *spinbutton);
+static void on_rotate_checkbutton_clicked(GtkCheckButton *checkbutton);
+static void on_angle_spinbutton_changed(GtkSpinButton *spinbutton);
 
 void beatflower_xmms_configure()
 {
@@ -383,9 +209,12 @@ void beatflower_xmms_configure()
  GtkWidget *cancel_button;
  
  pthread_mutex_lock(&beatflower_config_mutex);
+
  if(!beatflower_config_loaded)
- config_load(&beatflower_config);
+   config_load(&beatflower_config);
+ 
  beatflower_newconfig = beatflower_config;
+ 
  pthread_mutex_unlock(&beatflower_config_mutex);
 
  conf = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -952,3 +781,196 @@ void beatflower_xmms_about()
 {
  
 }
+
+/************************ Gtk+ event handlers *******************************/
+
+void on_fullscreen_checkbutton_clicked(GtkCheckButton *checkbutton)
+{
+  beatflower_newconfig.fullscreen = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
+}
+
+void on_width_spinbutton_changed(GtkSpinButton *spinbutton)
+{
+  int value;
+  
+  value = gtk_spin_button_get_value_as_int(spinbutton);
+  
+  if(value > 160 && value < 1600)
+    {
+      beatflower_newconfig.width = value;
+    }
+}
+  
+void on_height_spinbutton_changed(GtkSpinButton *spinbutton)
+{
+  int value;
+  
+  value = gtk_spin_button_get_value_as_int(spinbutton);
+  
+  if(value > 160 && value < 1400)
+    {
+      beatflower_newconfig.height = value;
+    }
+}
+
+/*void on_color1_color_set(GnomeColorPicker *gnomecolorpicker,
+                         guint             arg1,
+                         guint             arg2,
+                         guint             arg3,
+                         guint             arg4)
+{  
+  unsigned char red, green, blue;
+  
+  gnome_color_picker_get_i8(gnomecolorpicker, &red, &green, &blue, NULL);
+  beatflower_newconfig.color1 = (red << RED_SHIFT) | (green << GREEN_SHIFT) | (blue << BLUE_SHIFT);
+}
+
+void on_color2_color_set(GnomeColorPicker *gnomecolorpicker,
+                         guint             arg1,
+                         guint             arg2,
+                         guint             arg3,
+                         guint             arg4)
+{  
+  unsigned char red, green, blue;
+  
+  gnome_color_picker_get_i8(gnomecolorpicker, &red, &green, &blue, NULL);
+  beatflower_newconfig.color2 = (red << RED_SHIFT) | (green << GREEN_SHIFT) | (blue << BLUE_SHIFT);
+}
+
+void on_color3_color_set(GnomeColorPicker *gnomecolorpicker,
+                         guint             arg1,
+                         guint             arg2,
+                         guint             arg3,
+                         guint             arg4)
+{  
+  unsigned char red, green, blue;
+  
+  gnome_color_picker_get_i8(gnomecolorpicker, &red, &green, &blue, NULL);
+  beatflower_newconfig.color3 = (red << RED_SHIFT) | (green << GREEN_SHIFT) | (blue << BLUE_SHIFT);
+}*/
+
+void on_mode_option_selected(GtkMenuShell *shell)
+{
+  GtkWidget *active;
+  gint32     index;
+  
+  active = gtk_menu_get_active(GTK_MENU(shell));
+  index = g_list_index(shell->children, active);
+  beatflower_newconfig.color_mode = index;
+}   
+  
+void on_draw_option_selected(GtkMenuShell *shell)
+{
+  GtkWidget *active;
+  gint32     index;
+  
+  active = gtk_menu_get_active(GTK_MENU(shell));
+  index = g_list_index(shell->children, active);  
+  beatflower_newconfig.draw_mode = index;
+}   
+  
+void on_samples_option_selected(GtkMenuShell *shell)
+{
+  GtkWidget *active;
+  gint32     index;
+  
+  active = gtk_menu_get_active(GTK_MENU (shell));
+  index = g_list_index(shell->children, active);  
+  beatflower_newconfig.samples_mode = index;
+}   
+  
+void on_amplification_option_selected(GtkMenuShell *shell)
+{
+  GtkWidget *active;
+  gint32     index;
+  
+  active = gtk_menu_get_active (GTK_MENU (shell));
+  index = g_list_index (shell->children, active);  
+  beatflower_newconfig.amplification_mode = index;
+}   
+  
+void on_offset_option_selected(GtkMenuShell *shell)
+{
+  GtkWidget *active;
+  gint32     index;
+  
+  active = gtk_menu_get_active (GTK_MENU (shell));
+  index = g_list_index (shell->children, active);  
+  beatflower_newconfig.offset_mode = index;
+}   
+
+void on_blur_checkbutton_clicked(GtkCheckButton *checkbutton)
+{
+  beatflower_newconfig.blur = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
+}
+
+void on_apply_button_clicked(GtkButton *button)
+{
+  config_save(&beatflower_newconfig);
+
+  pthread_mutex_lock(&beatflower_config_mutex);
+  beatflower_config = beatflower_newconfig;
+  pthread_mutex_unlock(&beatflower_config_mutex);
+  
+  pthread_mutex_lock(&beatflower_status_mutex);
+  if(beatflower_playing) beatflower_reset = TRUE;
+  pthread_mutex_unlock(&beatflower_status_mutex);
+}
+
+void on_cancel_button_clicked(GtkButton *button)
+{
+}
+
+void on_ok_button_clicked(GtkButton *button)
+{
+  on_apply_button_clicked(button);
+  on_cancel_button_clicked(button);
+}
+
+void on_decay_spinbutton_changed(GtkSpinButton *spinbutton)
+{  
+  int value;
+  
+  value = gtk_spin_button_get_value_as_int(spinbutton);
+  
+  if(value > 0)
+    {
+      beatflower_newconfig.decay = value;
+    }
+}
+
+void on_zoom_checkbutton_clicked(GtkCheckButton *checkbutton)
+{
+  beatflower_newconfig.zoombeat = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
+}
+
+void on_factor_spinbutton_changed(GtkSpinButton *spinbutton)
+{  
+  double value;
+  
+  value = gtk_spin_button_get_value_as_float(spinbutton);
+  
+  if(value > 0)
+    {
+      beatflower_newconfig.factor = value;
+    }
+}
+
+void on_rotate_checkbutton_clicked(GtkCheckButton *checkbutton)
+{
+  beatflower_newconfig.rotatebeat = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
+}
+
+void on_angle_spinbutton_changed(GtkSpinButton *spinbutton)
+{  
+  double value;
+  
+  value = gtk_spin_button_get_value_as_float(spinbutton);
+  
+  if(value <= 180 && value >= -180)
+    {
+      beatflower_newconfig.angle = value;
+    }
+}
+
+
