@@ -20,8 +20,9 @@ XMMS_LIBS = $(shell xmms-config --libs)
 
 XMMS_PLUGIN = libbeatflower.so
 
-SOURCES = beatflower.c
+SOURCES = beatflower.c beatflower_xmms_plugin.c
 OBJECTS = $(SOURCES:%.c=%.o)
+HEADERS = beatflower.h
 TARGETS = $(XMMS_PLUGIN)
 
 $(TARGETS): CPPFLAGS += $(DEFS)
@@ -29,10 +30,11 @@ $(TARGETS): CFLAGS += -fPIC
 
 all: $(TARGETS) 
 
-beatflower.o: CFLAGS += $(XMMS_CFLAGS) $(SDL_CFLAGS)
+beatflower.o: CFLAGS += $(SDL_CFLAGS)
+beatflower.o beatflower_xmms_plugin.o: CFLAGS += $(XMMS_CFLAGS) 
 
 $(XMMS_PLUGIN): LIBS += $(XMMS_LIBS) $(SDL_LIBS)
-$(XMMS_PLUGIN): beatflower.o
+$(XMMS_PLUGIN): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $^ $(LIBS)
 
 clean:
