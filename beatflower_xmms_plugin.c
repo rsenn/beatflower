@@ -69,20 +69,31 @@ VisPlugin *get_vplugin_info()
 void beatflower_xmms_init()
 {
   pthread_attr_t attr;
+
+  g_message("%s:", __func__);
+
   srand(time(NULL));
+
   pthread_mutex_lock(&beatflower_config_mutex);
+
   if(!beatflower_config_loaded)
     beatflower_xmms_config_load(&beatflower_config);
+
   pthread_mutex_unlock(&beatflower_config_mutex);
+
+
   beatflower_finished = FALSE;
   beatflower_playing = FALSE;
   beatflower_reset = FALSE;
+
   pthread_attr_init(&attr);
   pthread_create(&beatflower_thread, NULL, beatflower_thread_function, &attr);
 }
 
 void beatflower_xmms_cleanup()
 {
+  g_message("%s:", __func__);
+
   pthread_mutex_lock(&beatflower_status_mutex);
   beatflower_finished = TRUE;
   beatflower_playing = FALSE;
@@ -91,6 +102,8 @@ void beatflower_xmms_cleanup()
 
 void beatflower_xmms_playback_start()
 {
+  g_message("%s:", __func__);
+
   pthread_mutex_lock(&beatflower_status_mutex);
   beatflower_playing = TRUE;
   pthread_mutex_unlock(&beatflower_status_mutex);
@@ -98,6 +111,8 @@ void beatflower_xmms_playback_start()
 
 void beatflower_xmms_playback_stop()
 {
+  g_message("%s:", __func__);
+
   pthread_mutex_lock(&beatflower_status_mutex);
   beatflower_playing = FALSE;
   pthread_mutex_unlock(&beatflower_status_mutex);
@@ -119,6 +134,8 @@ void beatflower_xmms_render_freq(short data[2][256])
 
 void beatflower_xmms_about()
 {
+  g_message("%s:", __func__);
+
 }
 
 

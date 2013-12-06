@@ -25,6 +25,8 @@
 
 #include "beatflower.h"
 
+GtkWidget *beatflower_xmms_settings_win = NULL;
+
 static void on_fullscreen_checkbutton_clicked(GtkCheckButton *checkbutton);
 static void on_width_spinbutton_changed(GtkSpinButton *spinbutton);
 static void on_height_spinbutton_changed(GtkSpinButton *spinbutton);
@@ -45,7 +47,6 @@ static void on_angle_spinbutton_changed(GtkSpinButton *spinbutton);
 
 void beatflower_xmms_settings()
 {
-  GtkWidget *conf;
   GtkWidget *vbox1;
   GtkWidget *vbox2;
   GtkWidget *notebook;
@@ -116,36 +117,39 @@ void beatflower_xmms_settings()
   GtkWidget *apply_button;
   GtkWidget *cancel_button;
 
-  pthread_mutex_lock(&beatflower_config_mutex);
+  if(beatflower_xmms_settings_win)
+	  return;
 
-  if(!beatflower_config_loaded)
+ /* pthread_mutex_lock(&beatflower_config_mutex);
+
+  if(!beatflower_config_loaded)*/
     beatflower_xmms_config_load(&beatflower_config);
 
-  beatflower_newconfig = beatflower_config;
+  /*beatflower_newconfig = beatflower_config;
 
   pthread_mutex_unlock(&beatflower_config_mutex);
-
-  conf = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_object_set_data (GTK_OBJECT (conf), "conf", conf);
-  gtk_window_set_title (GTK_WINDOW (conf), "conf");
+*/
+  beatflower_xmms_settings_win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_object_set_data (GTK_OBJECT (beatflower_xmms_settings_win), "beatflower_xmms_settings_win", beatflower_xmms_settings_win);
+  gtk_window_set_title (GTK_WINDOW (beatflower_xmms_settings_win), "beatflower_xmms_settings_win");
 
   vbox1 = gtk_vbox_new (FALSE, 0);
   gtk_widget_ref (vbox1);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "vbox1", vbox1,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "vbox1", vbox1,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (vbox1);
-  gtk_container_add (GTK_CONTAINER (conf), vbox1);
+  gtk_container_add (GTK_CONTAINER (beatflower_xmms_settings_win), vbox1);
 
   notebook = gtk_notebook_new ();
   gtk_widget_ref (notebook);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "notebook", notebook,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "notebook", notebook,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (notebook);
   gtk_box_pack_start (GTK_BOX (vbox1), notebook, TRUE, TRUE, 0);
 
   fullscreen_box = gtk_vbox_new (FALSE, 0);
   gtk_widget_ref (fullscreen_box);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "fullscreen_box", fullscreen_box,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "fullscreen_box", fullscreen_box,
 
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (fullscreen_box);
@@ -153,21 +157,21 @@ void beatflower_xmms_settings()
 
   fullscreen_checkbutton = gtk_check_button_new_with_label ("Fullscreen");
   gtk_widget_ref (fullscreen_checkbutton);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "fullscreen_checkbutton", fullscreen_checkbutton,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "fullscreen_checkbutton", fullscreen_checkbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (fullscreen_checkbutton);
   gtk_box_pack_start (GTK_BOX (fullscreen_box), fullscreen_checkbutton, FALSE, FALSE, 0);
 
   resolution_table = gtk_table_new (2, 2, FALSE);
   gtk_widget_ref (resolution_table);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "resolution_table", resolution_table,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "resolution_table", resolution_table,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (resolution_table);
   gtk_box_pack_start (GTK_BOX (fullscreen_box), resolution_table, TRUE, TRUE, 0);
 
   width_label = gtk_label_new ("Width");
   gtk_widget_ref (width_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "width_label", width_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "width_label", width_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (width_label);
   gtk_table_attach (GTK_TABLE (resolution_table), width_label, 0, 1, 0, 1,
@@ -178,7 +182,7 @@ void beatflower_xmms_settings()
   width_spinbutton_adj = gtk_adjustment_new (320, 0, 1600, 1, 10, 10);
   width_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (width_spinbutton_adj), 1, 0);
   gtk_widget_ref (width_spinbutton);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "width_spinbutton", width_spinbutton,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "width_spinbutton", width_spinbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (width_spinbutton);
   gtk_table_attach (GTK_TABLE (resolution_table), width_spinbutton, 1, 2, 0, 1,
@@ -188,7 +192,7 @@ void beatflower_xmms_settings()
 
   height_label = gtk_label_new ("Height");
   gtk_widget_ref (height_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "height_label", height_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "height_label", height_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (height_label);
   gtk_table_attach (GTK_TABLE (resolution_table), height_label, 0, 1, 1, 2,
@@ -199,7 +203,7 @@ void beatflower_xmms_settings()
   height_spinbutton_adj = gtk_adjustment_new (320, 0, 1400, 1, 10, 10);
   height_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (height_spinbutton_adj), 1, 0);
   gtk_widget_ref (height_spinbutton);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "height_spinbutton", height_spinbutton,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "height_spinbutton", height_spinbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (height_spinbutton);
   gtk_table_attach (GTK_TABLE (resolution_table), height_spinbutton, 1, 2, 1, 2,
@@ -209,49 +213,49 @@ void beatflower_xmms_settings()
 
   renderer_label = gtk_label_new ("Renderer");
   gtk_widget_ref (renderer_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "renderer_label", renderer_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "renderer_label", renderer_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (renderer_label);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 0), renderer_label);
 
   scope_box = gtk_hbox_new (FALSE, 0);
   gtk_widget_ref (scope_box);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "scope_box", scope_box,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "scope_box", scope_box,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (scope_box);
   gtk_container_add (GTK_CONTAINER (notebook), scope_box);
 
   color_frame = gtk_frame_new ("Color");
   gtk_widget_ref (color_frame);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "color_frame", color_frame,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color_frame", color_frame,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (color_frame);
   gtk_box_pack_start (GTK_BOX (scope_box), color_frame, TRUE, TRUE, 4);
 
   color_box = gtk_vbox_new (FALSE, 0);
   gtk_widget_ref (color_box);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "color_box", color_box,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color_box", color_box,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (color_box);
   gtk_container_add (GTK_CONTAINER (color_frame), color_box);
 
   mode_box = gtk_hbox_new (FALSE, 0);
   gtk_widget_ref (mode_box);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "mode_box", mode_box,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "mode_box", mode_box,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (mode_box);
   gtk_box_pack_start (GTK_BOX (color_box), mode_box, FALSE, FALSE, 4);
 
   mode_label = gtk_label_new ("Mode");
   gtk_widget_ref (mode_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "mode_label", mode_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "mode_label", mode_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (mode_label);
   gtk_box_pack_start (GTK_BOX (mode_box), mode_label, FALSE, FALSE, 4);
 
   mode_option = gtk_option_menu_new ();
   gtk_widget_ref (mode_option);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "mode_option", mode_option,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "mode_option", mode_option,
                             (GtkDestroyNotify) gtk_widget_unref);
 
   gtk_widget_show (mode_option);
@@ -273,14 +277,14 @@ void beatflower_xmms_settings()
 
   color_table = gtk_table_new (3, 2, FALSE);
   gtk_widget_ref (color_table);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "color_table", color_table,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color_table", color_table,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (color_table);
   gtk_box_pack_start (GTK_BOX (color_box), color_table, TRUE, TRUE, 0);
 
   color1_label = gtk_label_new ("Color 1");
   gtk_widget_ref (color1_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "color1_label", color1_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color1_label", color1_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (color1_label);
   gtk_table_attach (GTK_TABLE (color_table), color1_label, 0, 1, 0, 1,
@@ -290,7 +294,7 @@ void beatflower_xmms_settings()
 
   color2_label = gtk_label_new ("Color 2 ");
   gtk_widget_ref (color2_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "color2_label", color2_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color2_label", color2_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (color2_label);
   gtk_table_attach (GTK_TABLE (color_table), color2_label, 0, 1, 1, 2,
@@ -300,7 +304,7 @@ void beatflower_xmms_settings()
 
   color3_label = gtk_label_new ("Color 3");
   gtk_widget_ref (color3_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "color3_label", color3_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color3_label", color3_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (color3_label);
   gtk_table_attach (GTK_TABLE (color_table), color3_label, 0, 1, 2, 3,
@@ -310,7 +314,7 @@ void beatflower_xmms_settings()
 
   /* color3 = gnome_color_picker_new ();
    gtk_widget_ref (color3);
-   gtk_object_set_data_full (GTK_OBJECT (conf), "color3", color3,
+   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color3", color3,
       (GtkDestroyNotify) gtk_widget_unref);
    gtk_widget_show (color3);
    gtk_table_attach (GTK_TABLE (color_table), color3, 1, 2, 2, 3,
@@ -319,7 +323,7 @@ void beatflower_xmms_settings()
 
    color2 = gnome_color_picker_new ();
    gtk_widget_ref (color2);
-   gtk_object_set_data_full (GTK_OBJECT (conf), "color2", color2,
+   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color2", color2,
       (GtkDestroyNotify) gtk_widget_unref);
    gtk_widget_show (color2);
    gtk_table_attach (GTK_TABLE (color_table), color2, 1, 2, 1, 2,
@@ -328,7 +332,7 @@ void beatflower_xmms_settings()
 
    color1 = gnome_color_picker_new ();
    gtk_widget_ref (color1);
-   gtk_object_set_data_full (GTK_OBJECT (conf), "color1", color1,
+   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color1", color1,
       (GtkDestroyNotify) gtk_widget_unref);
    gtk_widget_show (color1);
    gtk_table_attach (GTK_TABLE (color_table), color1, 1, 2, 0, 1,
@@ -337,21 +341,21 @@ void beatflower_xmms_settings()
   */
   amplitude_frame = gtk_frame_new ("Amplitude");
   gtk_widget_ref (amplitude_frame);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "amplitude_frame", amplitude_frame,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "amplitude_frame", amplitude_frame,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (amplitude_frame);
   gtk_box_pack_start (GTK_BOX (scope_box), amplitude_frame, TRUE, TRUE, 0);
 
   amplitude_table = gtk_table_new (4, 2, FALSE);
   gtk_widget_ref (amplitude_table);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "amplitude_table", amplitude_table,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "amplitude_table", amplitude_table,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (amplitude_table);
   gtk_container_add (GTK_CONTAINER (amplitude_frame), amplitude_table);
 
   draw_label = gtk_label_new ("Draw Mode");
   gtk_widget_ref (draw_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "draw_label", draw_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "draw_label", draw_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (draw_label);
   gtk_table_attach (GTK_TABLE (amplitude_table), draw_label, 0, 1, 0, 1,
@@ -361,7 +365,7 @@ void beatflower_xmms_settings()
 
   draw_option = gtk_option_menu_new ();
   gtk_widget_ref (draw_option);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "draw_option", draw_option,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "draw_option", draw_option,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (draw_option);
   gtk_table_attach (GTK_TABLE (amplitude_table), draw_option, 1, 2, 0, 1,
@@ -384,7 +388,7 @@ void beatflower_xmms_settings()
 
   samples_label = gtk_label_new ("Samples");
   gtk_widget_ref (samples_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "samples_label", samples_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "samples_label", samples_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (samples_label);
   gtk_table_attach (GTK_TABLE (amplitude_table), samples_label, 0, 1, 1, 2,
@@ -394,7 +398,7 @@ void beatflower_xmms_settings()
 
   samples_option = gtk_option_menu_new ();
   gtk_widget_ref (samples_option);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "samples_option", samples_option,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "samples_option", samples_option,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (samples_option);
   gtk_table_attach (GTK_TABLE (amplitude_table), samples_option, 1, 2, 1, 2,
@@ -420,7 +424,7 @@ void beatflower_xmms_settings()
 
   amplification_label = gtk_label_new ("Amplification");
   gtk_widget_ref (amplification_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "amplification_label", amplification_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "amplification_label", amplification_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (amplification_label);
   gtk_table_attach (GTK_TABLE (amplitude_table), amplification_label, 0, 1, 2, 3,
@@ -430,7 +434,7 @@ void beatflower_xmms_settings()
 
   amplification_option = gtk_option_menu_new ();
   gtk_widget_ref (amplification_option);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "amplification_option", amplification_option,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "amplification_option", amplification_option,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (amplification_option);
   gtk_table_attach (GTK_TABLE (amplitude_table), amplification_option, 1, 2, 2, 3,
@@ -450,7 +454,7 @@ void beatflower_xmms_settings()
 
   offset_label = gtk_label_new ("Offset");
   gtk_widget_ref (offset_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "offset_label", offset_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "offset_label", offset_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (offset_label);
   gtk_table_attach (GTK_TABLE (amplitude_table), offset_label, 0, 1, 3, 4,
@@ -460,7 +464,7 @@ void beatflower_xmms_settings()
 
   offset_option = gtk_option_menu_new ();
   gtk_widget_ref (offset_option);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "offset_option", offset_option,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "offset_option", offset_option,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (offset_option);
   gtk_table_attach (GTK_TABLE (amplitude_table), offset_option, 1, 2, 3, 4,
@@ -480,7 +484,7 @@ void beatflower_xmms_settings()
 
   scope_label = gtk_label_new ("Scope");
   gtk_widget_ref (scope_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "scope_label", scope_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "scope_label", scope_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (scope_label);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK
@@ -488,35 +492,35 @@ void beatflower_xmms_settings()
 
   blur_box = gtk_vbox_new (FALSE, 0);
   gtk_widget_ref (blur_box);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "blur_box", blur_box,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "blur_box", blur_box,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (blur_box);
   gtk_container_add (GTK_CONTAINER (notebook), blur_box);
 
   vbox2 = gtk_vbox_new (FALSE, 0);
   gtk_widget_ref (vbox2);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "vbox2", vbox2,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "vbox2", vbox2,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (vbox2);
   gtk_box_pack_start (GTK_BOX (blur_box), vbox2, TRUE, TRUE, 0);
 
   blur_checkbutton = gtk_check_button_new_with_label ("Enable Blur");
   gtk_widget_ref (blur_checkbutton);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "blur_checkbutton", blur_checkbutton,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "blur_checkbutton", blur_checkbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (blur_checkbutton);
   gtk_box_pack_start (GTK_BOX (vbox2), blur_checkbutton, FALSE, FALSE, 4);
 
   decay_box = gtk_hbox_new (FALSE, 0);
   gtk_widget_ref (decay_box);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "decay_box", decay_box,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "decay_box", decay_box,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (decay_box);
   gtk_box_pack_start (GTK_BOX (vbox2), decay_box, TRUE, TRUE, 0);
 
   decay_label = gtk_label_new ("Decay Rate");
   gtk_widget_ref (decay_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "decay_label", decay_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "decay_label", decay_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (decay_label);
   gtk_box_pack_start (GTK_BOX (decay_box), decay_label, FALSE, FALSE, 4);
@@ -524,49 +528,49 @@ void beatflower_xmms_settings()
   decay_spinbutton_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
   decay_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (decay_spinbutton_adj), 1, 0);
   gtk_widget_ref (decay_spinbutton);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "decay_spinbutton", decay_spinbutton,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "decay_spinbutton", decay_spinbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_box_pack_start (GTK_BOX (decay_box), decay_spinbutton, TRUE, TRUE, 0);
   gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (decay_spinbutton), TRUE);
 
   special_box = gtk_hbox_new (FALSE, 0);
   gtk_widget_ref (special_box);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "special_box", special_box,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "special_box", special_box,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (special_box);
   gtk_box_pack_start (GTK_BOX (blur_box), special_box, TRUE, TRUE, 0);
 
   zoom_frame = gtk_frame_new ("Zoom");
   gtk_widget_ref (zoom_frame);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "zoom_frame", zoom_frame,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "zoom_frame", zoom_frame,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (zoom_frame);
   gtk_box_pack_start (GTK_BOX (special_box), zoom_frame, TRUE, TRUE, 4);
 
   zoom_box = gtk_vbox_new (FALSE, 0);
   gtk_widget_ref (zoom_box);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "zoom_box", zoom_box,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "zoom_box", zoom_box,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (zoom_box);
   gtk_container_add (GTK_CONTAINER (zoom_frame), zoom_box);
 
   zoom_checkbutton = gtk_check_button_new_with_label ("Zoom in/out by beat");
   gtk_widget_ref (zoom_checkbutton);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "zoom_checkbutton", zoom_checkbutton,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "zoom_checkbutton", zoom_checkbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (zoom_checkbutton);
   gtk_box_pack_start (GTK_BOX (zoom_box), zoom_checkbutton, FALSE, FALSE, 4);
 
   zoom_rate_box = gtk_hbox_new (FALSE, 0);
   gtk_widget_ref (zoom_rate_box);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "zoom_rate_box", zoom_rate_box,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "zoom_rate_box", zoom_rate_box,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (zoom_rate_box);
   gtk_box_pack_start (GTK_BOX (zoom_box), zoom_rate_box, TRUE, TRUE, 0);
 
   zoom_rate_label = gtk_label_new ("Rate");
   gtk_widget_ref (zoom_rate_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "zoom_rate_label", zoom_rate_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "zoom_rate_label", zoom_rate_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (zoom_rate_label);
   gtk_box_pack_start (GTK_BOX (zoom_rate_box), zoom_rate_label, FALSE, FALSE, 4);
@@ -574,7 +578,7 @@ void beatflower_xmms_settings()
   factor_spinbutton_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
   factor_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (factor_spinbutton_adj), 1, 3);
   gtk_widget_ref (factor_spinbutton);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "factor_spinbutton", factor_spinbutton,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "factor_spinbutton", factor_spinbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (factor_spinbutton);
   gtk_box_pack_start (GTK_BOX (zoom_rate_box), factor_spinbutton, TRUE, TRUE, 4);
@@ -583,35 +587,35 @@ void beatflower_xmms_settings()
 
   rotate_frame = gtk_frame_new ("Rotate");
   gtk_widget_ref (rotate_frame);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "rotate_frame", rotate_frame,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "rotate_frame", rotate_frame,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (rotate_frame);
   gtk_box_pack_start (GTK_BOX (special_box), rotate_frame, TRUE, TRUE, 4);
 
   rotate_box = gtk_vbox_new (FALSE, 0);
   gtk_widget_ref (rotate_box);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "rotate_box", rotate_box,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "rotate_box", rotate_box,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (rotate_box);
   gtk_container_add (GTK_CONTAINER (rotate_frame), rotate_box);
 
   rotate_checkbutton = gtk_check_button_new_with_label ("Rotate left/right by beat");
   gtk_widget_ref (rotate_checkbutton);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "rotate_checkbutton", rotate_checkbutton,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "rotate_checkbutton", rotate_checkbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (rotate_checkbutton);
   gtk_box_pack_start (GTK_BOX (rotate_box), rotate_checkbutton, FALSE, FALSE, 4);
 
   angle_box = gtk_hbox_new (FALSE, 0);
   gtk_widget_ref (angle_box);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "angle_box", angle_box,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "angle_box", angle_box,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (angle_box);
   gtk_box_pack_start (GTK_BOX (rotate_box), angle_box, TRUE, TRUE, 0);
 
   angle_label = gtk_label_new ("Angle");
   gtk_widget_ref (angle_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "angle_label", angle_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "angle_label", angle_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (angle_label);
   gtk_box_pack_start (GTK_BOX (angle_box), angle_label, FALSE, FALSE, 4);
@@ -619,14 +623,14 @@ void beatflower_xmms_settings()
   angle_spinbutton_adj = gtk_adjustment_new (1, -180, 180, 1, 10, 10);
   angle_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (angle_spinbutton_adj), 1, 3);
   gtk_widget_ref (angle_spinbutton);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "angle_spinbutton", angle_spinbutton,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "angle_spinbutton", angle_spinbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (angle_spinbutton);
   gtk_box_pack_start (GTK_BOX (angle_box), angle_spinbutton, TRUE, TRUE, 4);
 
   blur_label = gtk_label_new ("Blur");
   gtk_widget_ref (blur_label);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "blur_label", blur_label,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "blur_label", blur_label,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (blur_label);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK
@@ -634,14 +638,14 @@ void beatflower_xmms_settings()
 
   hbuttonbox1 = gtk_hbutton_box_new ();
   gtk_widget_ref (hbuttonbox1);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "hbuttonbox1", hbuttonbox1,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "hbuttonbox1", hbuttonbox1,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (hbuttonbox1);
   gtk_box_pack_start (GTK_BOX (vbox1), hbuttonbox1, TRUE, TRUE, 0);
 
   ok_button = gtk_button_new_with_label ("Ok");
   gtk_widget_ref (ok_button);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "ok_button", ok_button,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "ok_button", ok_button,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (ok_button);
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), ok_button);
@@ -649,7 +653,7 @@ void beatflower_xmms_settings()
 
   apply_button = gtk_button_new_with_label ("Apply");
   gtk_widget_ref (apply_button);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "apply_button", apply_button,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "apply_button", apply_button,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (apply_button);
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), apply_button);
@@ -657,7 +661,7 @@ void beatflower_xmms_settings()
 
   cancel_button = gtk_button_new_with_label ("Cancel");
   gtk_widget_ref (cancel_button);
-  gtk_object_set_data_full (GTK_OBJECT (conf), "cancel_button", cancel_button,
+  gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "cancel_button", cancel_button,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (cancel_button);
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), cancel_button);
@@ -672,6 +676,11 @@ void beatflower_xmms_settings()
   gtk_signal_connect (GTK_OBJECT (mode_option), "clicked",
                       GTK_SIGNAL_FUNC (on_mode_option_selected),
                       NULL);
+
+	gtk_signal_connect (GTK_OBJECT (ok_button), "clicked", GTK_SIGNAL_FUNC(on_ok_button_clicked), NULL);
+	gtk_signal_connect (GTK_OBJECT (apply_button), "clicked", GTK_SIGNAL_FUNC(on_apply_button_clicked), NULL);
+	gtk_signal_connect (GTK_OBJECT (cancel_button), "clicked", GTK_SIGNAL_FUNC(on_cancel_button_clicked), NULL);
+
   /* gtk_signal_connect (GTK_OBJECT (color3), "color_set",
      GTK_SIGNAL_FUNC (on_color3_color_set),
      NULL);
@@ -682,7 +691,8 @@ void beatflower_xmms_settings()
      GTK_SIGNAL_FUNC (on_color1_color_set),
      NULL);*/
 
-  gtk_widget_show((GtkWidget *)conf);
+  gtk_widget_show((GtkWidget *)beatflower_xmms_settings_win);
+  gtk_widget_grab_default(ok_button);
 }
 
 /************************ Gtk+ event handlers *******************************/
@@ -810,7 +820,7 @@ void on_blur_checkbutton_clicked(GtkCheckButton *checkbutton)
 void on_apply_button_clicked(GtkButton *button)
 {
   beatflower_xmms_config_save(&beatflower_newconfig);
-
+ 
   pthread_mutex_lock(&beatflower_config_mutex);
   beatflower_config = beatflower_newconfig;
   pthread_mutex_unlock(&beatflower_config_mutex);

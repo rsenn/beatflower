@@ -103,6 +103,8 @@ static bool         check_finished();
 
 void config_set_defaults(config_t *cfg)
 {
+  g_message("%s:", __func__);
+
   cfg->width  = 320;
   cfg->height = 320;
   cfg->fullscreen = FALSE;
@@ -265,9 +267,15 @@ static void create_sine_tables()
 /* initialize the beatflower engine */
 __inline__ static void init_engine()
 {
+  g_message("%s:", __func__);
+
   pthread_mutex_lock(&beatflower_config_mutex);
 
-  screen = SDL_SetVideoMode(beatflower_config.width, beatflower_config.height, 32, SDL_HWSURFACE);
+  beatflower_xmms_config_load(&beatflower_config);
+
+  g_message("Initializing beatflower video mode %ux%u ...", beatflower_config.width, beatflower_config.height);
+
+  screen = SDL_SetVideoMode(beatflower_config.width, beatflower_config.height, 32, SDL_SWSURFACE);
   
   pixels = screen->pixels;
   pitch  = screen->pitch;
@@ -549,7 +557,7 @@ void find_color(Sint16 data[2][256])
   Sint32 count = 0;
   Sint32 i;
   
-  for(i = 0; i < 64; i++)
+	for(i = 0; i < 64; i++)
     {
       x = (data[0][i] + data[1][i]) >> 1;
 
@@ -604,6 +612,9 @@ static bool check_playing()
 
 void *beatflower_thread_function(void *blah)
 { 
+  g_message("%s:", __func__);
+
+
   while(!check_playing())
     {
       if(check_finished())
