@@ -133,7 +133,10 @@ void config_load(config_t *cfg)
   sprintf(name, "%s%s", g_get_home_dir(), "/.xmms/beatflower_config");
   
   if(!(f = xmms_cfg_open_file(name)))
+	{
+    g_warning("Could not open XMMS beatflower config '%s', settings defaults...", name);	
     config_set_defaults(cfg);
+	}
   else
     {
       xmms_cfg_read_boolean(f, PACKAGE, "fullscreen", &cfg->fullscreen);
@@ -186,6 +189,7 @@ void config_save(config_t *cfg)
   xmms_cfg_write_boolean(f, PACKAGE, "zoombeat", cfg->zoombeat);
   xmms_cfg_write_boolean(f, PACKAGE, "rotatebeat", cfg->rotatebeat);
 
+  g_message("Writing XMMS beatflower config to '%s' ...", name);	
   xmms_cfg_write_file(f, name);
   xmms_cfg_free(f);
 }
