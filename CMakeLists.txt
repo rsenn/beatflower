@@ -16,8 +16,9 @@ message(STATUS "GTK_COMPILE_FLAGS = ${GTK_COMPILE_FLAGS} GTK_LINK_FLAGS = ${GTK_
 #set(GTK_COMPILE_FLAGS "`${CMAKE_GTK_CONFIG} --cflags`")
 #set(GTK_LINK_FLAGS "`${CMAKE_GTK_CONFIG} --libs --gl-libs`")
 
-add_definitions(-DPACKAGE=\\"beatflower\\")
-add_definitions(-DVERSION=\\"1.0\\")
+set(DEFS PACKAGE="beatflower" VERSION="1.0")
+#add_definitions(${DEFS})
+
 
 include_directories(${GTK_glib_INCLUDE_PATH} ${GTK_glibconfig_INCLUDE_PATH} ${GTK_gtk_INCLUDE_PATH})
 include_directories(${SDL_INCLUDE_DIR})
@@ -34,4 +35,7 @@ set(SOURCES
 add_library(beatflower SHARED ${SOURCES})
 
 target_link_libraries(beatflower ${GTK_gtk_LIBRARY})
-set_target_properties(beatflower PROPERTIES COMPILE_FLAGS "${GTK_COMPILE_FLAGS}" LINK_FLAGS "${GTK_LINK_FLAGS}")
+set_target_properties(beatflower PROPERTIES
+  COMPILE_DEFINITIONS "${DEFS}"
+  COMPILE_FLAGS "${GTK_COMPILE_FLAGS}"
+  LINK_FLAGS "${GTK_LINK_FLAGS}")
