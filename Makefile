@@ -15,7 +15,12 @@ LDFLAGS = -shared -rdynamic
 PACKAGE = beatflower
 VERSION = 1.0
 
-xmms_visualization_plugin_dir = $(shell xmms-config --visualization-plugin-dir)
+xmms_visualization_plugin_dir := $(shell xmms-config --visualization-plugin-dir)
+xmms_visualization_plugin_dirs := $(subst lib64,lib,$(xmms_visualization_plugin_dir))
+
+ifneq ($(xmms_visualization_plugin_dir),$(xmms_visualization_plugin_dirs))
+xmms_visualization_plugin_dirs += $(xmms_visualization_plugin_dir)
+endif
 
 DEFS = -DPACKAGE=\"$(PACKAGE)\" -DVERSION=\"$(VERSION)\"
 
@@ -47,7 +52,9 @@ $(XMMS_PLUGIN): $(OBJECTS)
 clean:
 	$(RM) $(OBJECTS)
 
-install:
-	$(INSTALL) -d $(DESTDIR)$(xmms_visualization_plugin_dir)
-	$(INSTALL) -m 755 $(XMMS_PLUGIN) $(DESTDIR)$(xmms_visualization_plugin_dir)
+install: all
+	@for dir in $(xmms_visualization_plugin_dirs); do \
+	  CMD="$(INSTALL) -d $(DESTDIR)$$dir; $(INSTALL) -m 755 $(XMMS_PLUGIN) $(DESTDIR)$$dir"; \
+		echo -e "$$CMD" 1>&2; eval "$$CMD"; \
+  done
 

@@ -804,7 +804,10 @@ void beatflower_xmms_settings()
 
 void on_fullscreen_checkbutton_clicked(GtkCheckButton *checkbutton)
 {
-  beatflower_newconfig.fullscreen = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
+	gboolean fullscreen = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton)); 
+
+  g_message("%s: fullscreen = %s", __PRETTY_FUNCTION__, fullscreen);
+  beatflower_newconfig.fullscreen = fullscreen ;
 }
 
 void on_width_spinbutton_changed(GtkSpinButton *spinbutton)
@@ -815,6 +818,7 @@ void on_width_spinbutton_changed(GtkSpinButton *spinbutton)
 
   if(value > 160 && value < 1600)
   {
+		g_message("%s: width = %u", __PRETTY_FUNCTION__, value);
     beatflower_newconfig.width = value;
   }
 }
@@ -827,6 +831,7 @@ void on_height_spinbutton_changed(GtkSpinButton *spinbutton)
 
   if(value > 160 && value < 1400)
   {
+		g_message("%s: height = %u", __PRETTY_FUNCTION__, value);
     beatflower_newconfig.height = value;
   }
 }
@@ -874,7 +879,7 @@ void on_mode_option_changed(GtkMenuItem *item, GtkMenu *menu)
 
   active = gtk_menu_get_active(GTK_MENU(menu));
   index = g_list_index(gtk_container_children(GTK_CONTAINER(menu)), active);
-	g_message("%s: active = %i", __PRETTY_FUNCTION__, index);
+	g_message("%s: color_mode = %i", __PRETTY_FUNCTION__, index);
   beatflower_newconfig.color_mode = index;
 }
 
@@ -885,7 +890,7 @@ void on_draw_option_changed(GtkMenuItem *item, GtkMenu *menu)
 
   active = gtk_menu_get_active(GTK_MENU(menu));
   index = g_list_index(gtk_container_children(GTK_CONTAINER(menu)), active);
-	g_message("%s: active = %i", __PRETTY_FUNCTION__, index);
+	g_message("%s: draw_mode = %i", __PRETTY_FUNCTION__, index);
   beatflower_newconfig.draw_mode = index;
 }
 
@@ -896,7 +901,7 @@ void on_samples_option_changed(GtkMenuItem *item, GtkMenu *menu)
 
   active = gtk_menu_get_active(GTK_MENU(menu));
   index = g_list_index(gtk_container_children(GTK_CONTAINER(menu)), active);
-	g_message("%s: active = %i", __PRETTY_FUNCTION__, index);
+	g_message("%s: samples_mode = %i", __PRETTY_FUNCTION__, index);
   beatflower_newconfig.samples_mode = index;
 }
 
@@ -907,7 +912,7 @@ void on_amplification_option_changed(GtkMenuItem *item, GtkMenu *menu)
 
   active = gtk_menu_get_active(GTK_MENU(menu));
   index = g_list_index(gtk_container_children(GTK_CONTAINER(menu)), active);
-	g_message("%s: active = %i", __PRETTY_FUNCTION__, index);
+	g_message("%s: amplification_mode = %i", __PRETTY_FUNCTION__, index);
   beatflower_newconfig.amplification_mode = index;
 }
 
@@ -918,24 +923,26 @@ void on_offset_option_changed(GtkMenuItem *item, GtkMenu *menu)
 
   active = gtk_menu_get_active(GTK_MENU(menu));
   index = g_list_index(gtk_container_children(GTK_CONTAINER(menu)), active);
-	g_message("%s: active = %i", __PRETTY_FUNCTION__, index);
+	g_message("%s: offset_mode = %i", __PRETTY_FUNCTION__, index);
   beatflower_newconfig.offset_mode = index;
 }
 
 void on_blur_checkbutton_clicked(GtkCheckButton *checkbutton)
 {
-  beatflower_newconfig.blur = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
+  gboolean flag = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
+	g_message("%s: blur = %i", __PRETTY_FUNCTION__, flag);
+  beatflower_newconfig.blur = flag;
 }
 
 void on_apply_button_clicked(GtkButton *button)
 {
   beatflower_xmms_config_save(&beatflower_newconfig);
  
-  SDL_LockMutex(beatflower_config_mutex);
+  //SDL_LockMutex(beatflower_config_mutex);
   beatflower_config = beatflower_newconfig;
-  SDL_UnlockMutex(beatflower_config_mutex);
+  //SDL_UnlockMutex(beatflower_config_mutex);
 
-	beatflower_xmms_config_save(&beatflower_config);
+	//beatflower_xmms_config_save(&beatflower_config);
 
   SDL_LockMutex(beatflower_status_mutex);
   if(beatflower_playing) beatflower_reset = TRUE;
@@ -944,6 +951,9 @@ void on_apply_button_clicked(GtkButton *button)
 
 void on_cancel_button_clicked(GtkButton *button)
 {
+  gtk_widget_destroy((GtkWidget *)beatflower_xmms_settings_win);
+
+	beatflower_newconfig = beatflower_config;
 }
 
 void on_ok_button_clicked(GtkButton *button)
@@ -966,7 +976,9 @@ void on_ok_button_clicked(GtkButton *button)
 */
 void on_zoom_checkbutton_clicked(GtkCheckButton *checkbutton)
 {
-  beatflower_newconfig.zoombeat = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
+	gboolean flag = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
+	
+  beatflower_newconfig.zoombeat = flag;
 }
 
 void on_factor_spinbutton_changed(GtkSpinButton *spinbutton)
@@ -978,7 +990,8 @@ void on_factor_spinbutton_changed(GtkSpinButton *spinbutton)
   if(value > 0)
   {
     beatflower_newconfig.factor = value;
-  }
+   
+	}
 }
 
 void on_rotate_checkbutton_clicked(GtkCheckButton *checkbutton)
