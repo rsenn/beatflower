@@ -1,0 +1,149 @@
+*** Keyboard Shortcuts (these can be used in
+*** any of Winamp's main windows) ***
+	Key			Action
+	------------------------------------------------------------------------------
+	F1			About Box
+	Ctrl+A			Toggle Always-On-Top (all but playlist editor)
+	Ctrl+Alt+A			Toggle Always-On-Top (playlist editor)
+	Ctrl+W			Toggle Windowshade mode
+
+	Ctrl+D			Toggle Doublesize Mode
+	Ctrl+E			Toggle Easymove
+	Ctrl+T			Toggle Time Display Mode 
+
+	Alt+W			Toggle Main Window
+	Alt+E			Toggle Playlist Editor
+	Alt+G			Toggle Graphical Equalizer
+	Alt+T			Toggle Minibrowser
+	Ctrl+Tab			Cycle through different Winamp windows
+
+	Alt+S			Go to Skin selection
+	Ctrl+P			Go to Preferences
+	Alt+O			Go to Built-in Visualization options
+	Alt+F			Jump to Main Menu
+
+	Alt+K			Configure current Visualization Plug-In
+	Ctrl+Shift+K		Start/Stop current Visualization Plug-In
+	Ctrl+K			Open Visualization Tab of Preferences
+
+	Ctrl+J			Jump to time in current track
+	J or Keypad .		Open Jump-to-file Box
+
+	Ctrl+Alt+N			Spawn new Winamp instance
+
+
+*** Main Window Keyboard Shortcuts ***
+	Key			Action
+	------------------------------------------------------------------------------
+
+	(options/toggles)
+	R			Toggle Repeat
+	S			Toggle Shuffle
+
+	Alt+3			Current file info box/ID3 editor
+
+	(playback controls)
+	X or Keypad 5		Play/Restart/Unpause
+	V			Stop
+	Shift+V			Stop with Fadeout
+	Ctrl+V			Stop after current track
+	C			Pause/Unpause
+	B or Keypad 6		Next Track
+	Z or Keypad 4		Previous Track
+	Keypad 1			Jump Ten Songs Back
+	Keypad 3			Jump Ten Songs Forward
+	Left Arrow or Keypad 7	Rewind 5 seconds
+	Keypad 9 or Right Arrow	Fast-forward 5 seconds
+
+	L or Keypad 0		Open/Play File
+	Ctrl+L or Ctrl+Keypad 0	Open/Play location
+	Shift+L or Insert		Open/Play Directory
+	Keypad 8 or Up Arrow	Turn Volume Up
+	Down Arrow or Keypad 2	Turn Volume Down
+
+
+*** Playlist Editor Keyboard Shortcuts ***
+	Key			Action
+	------------------------------------------------------------------------------
+	R			Toggle Repeat
+	S			Toggle Shuffle
+
+	(file io)
+	L or Keypad 0		Add File
+	Ctrl+L or Ctrl+Keypad 0	Add Location
+	Shift+L or Insert		Add Directory
+	Ctrl+N			New (Clear) Playlist
+	Ctrl+O			Open (Load) Playlist
+	Ctrl+S			Save Playlist
+	Alt+3			View/Edit Track Info for selected track(s)
+	Ctrl+E			Edit Selected Track Filename(s)
+
+	(playlist manipulation)		
+	Ctrl+A			Select All
+	Ctrl+I			Invert Selection
+	Delete			Remove Selected Files from Playlist
+	Ctrl+Delete		Crop Playlist
+	Ctrl+Shift+Delete		Clear Playlist (same as Ctrl+O)
+
+	Alt+Down Arrow		Move Selected Files Down
+	Alt+Up Arrow		Move Selected Files Up
+
+	Down Arrow		Move Cursor Down
+	Up Arrow			Move Cursor Up
+	Enter			Play Selected File
+	End			Jump to End of List
+	Home			Jump to Start of List
+	Page Up			Move up by a fifth of a page
+	Page Down		Move down by a fifth of a page
+
+	Alt+Delete		Remove dead (non-existent) files
+
+	(playlist sorting)
+	Ctrl+Shift+1		Sort Playlist by Title
+	Ctrl+Shift+2		Sort Playlist by File Name
+	Ctrl+Shift+3		Sort Playlist by File Path and Name
+	Ctrl+R			Reverse Playlist
+	Ctrl+Shift+R		Randomize Playlist
+
+
+	(playback controls (ala main window))
+	X or Keypad 5		Play/Restart/Unpause
+	V			Stop
+	Shift+V			Stop with Fadeout
+	C			Pause/Unpause
+	B or Keypad 6		Next Track
+	Z or Keypad 4		Previous Track
+	Keypad 1			Jump Ten Songs Back
+	Keypad 3			Jump Ten Songs Forward
+	Left Arrow or Keypad 7	Rewind 5 seconds
+	Keypad 9 or Right Arrow	Fast-forward 5 seconds
+
+	Ctrl+F4			Close (hide) Playlist Editor
+
+
+*** Graphical Equalizer Keyboard Shortcuts ***
+	Key			Action
+	------------------------------------------------------------------------------
+	1 - 0			Increase EQ bands
+	Q - P			Decrease EQ bands
+	`			Increase EQ Preamp
+	TAB			Decrease EQ Preamp
+	N			Toggle EQ
+	S			Open Presets Menu
+	Ctrl+S			Load Preset
+	A			Toggle EQ Auto-Loading
+	Ctrl+F4			Close (hide) Graphical Equalizer
+
+
+*** Minibrowser Keyboard Shortcuts ***
+	Key			Action
+	------------------------------------------------------------------------------
+	Alt+Left			Go Back
+	Alt+Right			Go Forward
+	Ctrl+L			Open 'Go' Menu
+	Ctrl+O			Open Internet Location Box
+	Ctrl+R			Reload page
+	Ctrl+Alt+R			Update Link List
+	
+	Ctrl+F4			Close (hide) Minibrowser
+!!End
