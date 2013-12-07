@@ -119,17 +119,19 @@ void beatflower_xmms_settings()
   GtkWidget *apply_button;
   GtkWidget *cancel_button;
 
-  if(beatflower_xmms_settings_win)
-	  return;
+  if(beatflower_xmms_settings_win) {
+    return;
+  }
 
   SDL_LockMutex(beatflower_config_mutex);
 
-  if(!beatflower_config_loaded)
+  if(!beatflower_config_loaded) {
     beatflower_xmms_config_load(&beatflower_config);
+  }
 
   beatflower_newconfig = beatflower_config;
 
-  SDL_UnlockMutex(beatflower_config_mutex); 
+  SDL_UnlockMutex(beatflower_config_mutex);
 
   beatflower_xmms_settings_win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_object_set_data (GTK_OBJECT (beatflower_xmms_settings_win), "beatflower_xmms_settings_win", beatflower_xmms_settings_win);
@@ -157,10 +159,10 @@ void beatflower_xmms_settings()
   gtk_widget_show (fullscreen_box);
   gtk_container_add (GTK_CONTAINER (notebook), fullscreen_box);
 
-	/* GtkCheckButton - fullscreen */
+  /* GtkCheckButton - fullscreen */
   fullscreen_checkbutton = gtk_check_button_new_with_label ("Fullscreen");
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(fullscreen_checkbutton), beatflower_newconfig.fullscreen?TRUE:FALSE);
-	gtk_widget_ref (fullscreen_checkbutton);
+  gtk_widget_ref (fullscreen_checkbutton);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "fullscreen_checkbutton", fullscreen_checkbutton,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (fullscreen_checkbutton);
@@ -183,7 +185,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (width_label), 0, 0.5);
 
-	// GtkSpinButton: config.width
+  // GtkSpinButton: config.width
   width_spinbutton_adj = gtk_adjustment_new (beatflower_newconfig.width, 0, 1600, 1, 10, 10);
   width_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (width_spinbutton_adj), 1, 0);
   gtk_widget_ref (width_spinbutton);
@@ -205,7 +207,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (height_label), 0, 0.5);
 
-	// GtkSpinButton: config.height
+  // GtkSpinButton: config.height
   height_spinbutton_adj = gtk_adjustment_new (beatflower_newconfig.height, 0, 1400, 1, 10, 10);
   height_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (height_spinbutton_adj), 1, 0);
   gtk_widget_ref (height_spinbutton);
@@ -259,7 +261,7 @@ void beatflower_xmms_settings()
   gtk_widget_show (mode_label);
   gtk_box_pack_start (GTK_BOX (mode_box), mode_label, FALSE, FALSE, 4);
 
-	// GtkOptionMenu: config.color_mode
+  // GtkOptionMenu: config.color_mode
   mode_option = gtk_option_menu_new ();
   gtk_widget_ref (mode_option);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "mode_option", mode_option,
@@ -270,24 +272,24 @@ void beatflower_xmms_settings()
   mode_option_menu = gtk_menu_new ();
   glade_menuitem = gtk_menu_item_new_with_label ("2 Color Gradient");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_mode_option_changed), GTK_MENU(mode_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_mode_option_changed), GTK_MENU(mode_option_menu));
   gtk_menu_append (GTK_MENU (mode_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("3 Color Gradient");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_mode_option_changed), GTK_MENU(mode_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_mode_option_changed), GTK_MENU(mode_option_menu));
   gtk_menu_append (GTK_MENU (mode_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("Random");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_mode_option_changed), GTK_MENU(mode_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_mode_option_changed), GTK_MENU(mode_option_menu));
   gtk_menu_append (GTK_MENU (mode_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("From Frequencies");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_mode_option_changed), GTK_MENU(mode_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_mode_option_changed), GTK_MENU(mode_option_menu));
   gtk_menu_append (GTK_MENU (mode_option_menu), glade_menuitem);
   gtk_option_menu_set_menu (GTK_OPTION_MENU (mode_option), mode_option_menu);
 
-	//gtk_menu_set_active(GTK_MENU(mode_option_menu), beatflower_newconfig.color_mode);
-	 gtk_option_menu_set_history(GTK_OPTION_MENU(mode_option), beatflower_newconfig.color_mode);
+  //gtk_menu_set_active(GTK_MENU(mode_option_menu), beatflower_newconfig.color_mode);
+  gtk_option_menu_set_history(GTK_OPTION_MENU(mode_option), beatflower_newconfig.color_mode);
 
 
 
@@ -329,34 +331,34 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (color3_label), 0, 0.5);
 
-/*
-   color3 = gnome_color_picker_new ();
-   gtk_widget_ref (color3);
-   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color3", color3,
-      (GtkDestroyNotify) gtk_widget_unref);
-   gtk_widget_show (color3);
-   gtk_table_attach (GTK_TABLE (color_table), color3, 1, 2, 2, 3,
-     (GtkAttachOptions) (GTK_FILL),
-     (GtkAttachOptions) (0), 4, 4);
+  /*
+     color3 = gnome_color_picker_new ();
+     gtk_widget_ref (color3);
+     gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color3", color3,
+        (GtkDestroyNotify) gtk_widget_unref);
+     gtk_widget_show (color3);
+     gtk_table_attach (GTK_TABLE (color_table), color3, 1, 2, 2, 3,
+       (GtkAttachOptions) (GTK_FILL),
+       (GtkAttachOptions) (0), 4, 4);
 
-   color2 = gnome_color_picker_new ();
-   gtk_widget_ref (color2);
-   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color2", color2,
-      (GtkDestroyNotify) gtk_widget_unref);
-   gtk_widget_show (color2);
-   gtk_table_attach (GTK_TABLE (color_table), color2, 1, 2, 1, 2,
-     (GtkAttachOptions) (GTK_FILL),
-     (GtkAttachOptions) (0), 4, 4);
+     color2 = gnome_color_picker_new ();
+     gtk_widget_ref (color2);
+     gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color2", color2,
+        (GtkDestroyNotify) gtk_widget_unref);
+     gtk_widget_show (color2);
+     gtk_table_attach (GTK_TABLE (color_table), color2, 1, 2, 1, 2,
+       (GtkAttachOptions) (GTK_FILL),
+       (GtkAttachOptions) (0), 4, 4);
 
-   color1 = gnome_color_picker_new ();
-   gtk_widget_ref (color1);
-   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color1", color1,
-      (GtkDestroyNotify) gtk_widget_unref);
-   gtk_widget_show (color1);
-   gtk_table_attach (GTK_TABLE (color_table), color1, 1, 2, 0, 1,
-     (GtkAttachOptions) (GTK_FILL),
-     (GtkAttachOptions) (0), 4, 4);
- */ 
+     color1 = gnome_color_picker_new ();
+     gtk_widget_ref (color1);
+     gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "color1", color1,
+        (GtkDestroyNotify) gtk_widget_unref);
+     gtk_widget_show (color1);
+     gtk_table_attach (GTK_TABLE (color_table), color1, 1, 2, 0, 1,
+       (GtkAttachOptions) (GTK_FILL),
+       (GtkAttachOptions) (0), 4, 4);
+   */
   amplitude_frame = gtk_frame_new ("Amplitude");
   gtk_widget_ref (amplitude_frame);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "amplitude_frame", amplitude_frame,
@@ -381,7 +383,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (draw_label), 1, 0);
 
-	// GtkOptionMenu: config.draw_mode
+  // GtkOptionMenu: config.draw_mode
   draw_option = gtk_option_menu_new ();
   gtk_widget_ref (draw_option);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "draw_option", draw_option,
@@ -393,24 +395,24 @@ void beatflower_xmms_settings()
   draw_option_menu = gtk_menu_new ();
   glade_menuitem = gtk_menu_item_new_with_label ("Dots");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_draw_option_changed), GTK_MENU(draw_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_draw_option_changed), GTK_MENU(draw_option_menu));
   gtk_menu_append (GTK_MENU (draw_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("Balls");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_draw_option_changed), GTK_MENU(draw_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_draw_option_changed), GTK_MENU(draw_option_menu));
   gtk_menu_append (GTK_MENU (draw_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("Lines");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_draw_option_changed), GTK_MENU(draw_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_draw_option_changed), GTK_MENU(draw_option_menu));
   gtk_menu_append (GTK_MENU (draw_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("Lines from Center");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_draw_option_changed), GTK_MENU(draw_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_draw_option_changed), GTK_MENU(draw_option_menu));
   gtk_menu_append (GTK_MENU (draw_option_menu), glade_menuitem);
   gtk_option_menu_set_menu (GTK_OPTION_MENU (draw_option), draw_option_menu);
 
-	//gtk_menu_set_active(GTK_MENU(draw_option_menu), beatflower_newconfig.draw_mode);
-	 gtk_option_menu_set_history(GTK_OPTION_MENU(draw_option), beatflower_newconfig.draw_mode);
+  //gtk_menu_set_active(GTK_MENU(draw_option_menu), beatflower_newconfig.draw_mode);
+  gtk_option_menu_set_history(GTK_OPTION_MENU(draw_option), beatflower_newconfig.draw_mode);
 
 
 
@@ -425,7 +427,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (samples_label), 1, 0.5);
 
-	// GtkOptionMenu: config.samples_mode
+  // GtkOptionMenu: config.samples_mode
   samples_option = gtk_option_menu_new ();
   gtk_widget_ref (samples_option);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "samples_option", samples_option,
@@ -437,28 +439,28 @@ void beatflower_xmms_settings()
   samples_option_menu = gtk_menu_new ();
   glade_menuitem = gtk_menu_item_new_with_label ("32");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_samples_option_changed), GTK_MENU(samples_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_samples_option_changed), GTK_MENU(samples_option_menu));
   gtk_menu_append (GTK_MENU (samples_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("64");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_samples_option_changed), GTK_MENU(samples_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_samples_option_changed), GTK_MENU(samples_option_menu));
   gtk_menu_append (GTK_MENU (samples_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("128");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_samples_option_changed), GTK_MENU(samples_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_samples_option_changed), GTK_MENU(samples_option_menu));
   gtk_menu_append (GTK_MENU (samples_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("256");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_samples_option_changed), GTK_MENU(samples_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_samples_option_changed), GTK_MENU(samples_option_menu));
   gtk_menu_append (GTK_MENU (samples_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("512");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_samples_option_changed), GTK_MENU(samples_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_samples_option_changed), GTK_MENU(samples_option_menu));
   gtk_menu_append (GTK_MENU (samples_option_menu), glade_menuitem);
   gtk_option_menu_set_menu (GTK_OPTION_MENU (samples_option), samples_option_menu);
 
-	//gtk_menu_set_active(GTK_MENU(samples_option_menu), beatflower_newconfig.samples_mode);
-	 gtk_option_menu_set_history(GTK_OPTION_MENU(samples_option), beatflower_newconfig.samples_mode);
+  //gtk_menu_set_active(GTK_MENU(samples_option_menu), beatflower_newconfig.samples_mode);
+  gtk_option_menu_set_history(GTK_OPTION_MENU(samples_option), beatflower_newconfig.samples_mode);
 
 
 
@@ -473,7 +475,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (amplification_label), 1, 0.5);
 
-	// GtkOptionMenu: config.amplification_mode
+  // GtkOptionMenu: config.amplification_mode
   amplification_option = gtk_option_menu_new ();
   gtk_widget_ref (amplification_option);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "amplification_option", amplification_option,
@@ -485,20 +487,20 @@ void beatflower_xmms_settings()
   amplification_option_menu = gtk_menu_new ();
   glade_menuitem = gtk_menu_item_new_with_label ("0.5");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_amplification_option_changed), GTK_MENU(amplification_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_amplification_option_changed), GTK_MENU(amplification_option_menu));
   gtk_menu_append (GTK_MENU (amplification_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("1");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_amplification_option_changed), GTK_MENU(amplification_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_amplification_option_changed), GTK_MENU(amplification_option_menu));
   gtk_menu_append (GTK_MENU (amplification_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("2");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_amplification_option_changed), GTK_MENU(amplification_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_amplification_option_changed), GTK_MENU(amplification_option_menu));
   gtk_menu_append (GTK_MENU (amplification_option_menu), glade_menuitem);
   gtk_option_menu_set_menu (GTK_OPTION_MENU (amplification_option), amplification_option_menu);
 
-	//gtk_menu_set_active(GTK_MENU(amplification_option_menu), beatflower_newconfig.amplification_mode);
-	 gtk_option_menu_set_history(GTK_OPTION_MENU(amplification_option), beatflower_newconfig.amplification_mode);
+  //gtk_menu_set_active(GTK_MENU(amplification_option_menu), beatflower_newconfig.amplification_mode);
+  gtk_option_menu_set_history(GTK_OPTION_MENU(amplification_option), beatflower_newconfig.amplification_mode);
 
 
 
@@ -513,7 +515,7 @@ void beatflower_xmms_settings()
                     (GtkAttachOptions) (0), 4, 4);
   gtk_misc_set_alignment (GTK_MISC (offset_label), 1, 0.5);
 
-	// GtkOptionMenu: config.offset_mode
+  // GtkOptionMenu: config.offset_mode
   offset_option = gtk_option_menu_new ();
   gtk_widget_ref (offset_option);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "offset_option", offset_option,
@@ -525,20 +527,20 @@ void beatflower_xmms_settings()
   offset_option_menu = gtk_menu_new ();
   glade_menuitem = gtk_menu_item_new_with_label ("-32768");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_offset_option_changed), GTK_MENU(offset_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_offset_option_changed), GTK_MENU(offset_option_menu));
   gtk_menu_append (GTK_MENU (offset_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("+/-0");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_offset_option_changed), GTK_MENU(offset_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_offset_option_changed), GTK_MENU(offset_option_menu));
   gtk_menu_append (GTK_MENU (offset_option_menu), glade_menuitem);
   glade_menuitem = gtk_menu_item_new_with_label ("+32768");
   gtk_widget_show (glade_menuitem);
-	gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_offset_option_changed), GTK_MENU(offset_option_menu));
+  gtk_signal_connect(GTK_OBJECT(glade_menuitem), "activate", GTK_SIGNAL_FUNC(on_offset_option_changed), GTK_MENU(offset_option_menu));
   gtk_menu_append (GTK_MENU (offset_option_menu), glade_menuitem);
   gtk_option_menu_set_menu (GTK_OPTION_MENU (offset_option), offset_option_menu);
 
-	//gtk_menu_set_active(GTK_MENU(offset_option_menu), beatflower_newconfig.offset_mode);
-	 gtk_option_menu_set_history(GTK_OPTION_MENU(offset_option), beatflower_newconfig.offset_mode);
+  //gtk_menu_set_active(GTK_MENU(offset_option_menu), beatflower_newconfig.offset_mode);
+  gtk_option_menu_set_history(GTK_OPTION_MENU(offset_option), beatflower_newconfig.offset_mode);
 
 
 
@@ -575,7 +577,7 @@ void beatflower_xmms_settings()
   gtk_box_pack_start (GTK_BOX (vbox2), blur_checkbutton, FALSE, FALSE, 4);
 
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(blur_checkbutton), beatflower_newconfig.blur ? TRUE:FALSE);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(blur_checkbutton), beatflower_newconfig.blur ? TRUE:FALSE);
 
 
 
@@ -634,7 +636,7 @@ void beatflower_xmms_settings()
   gtk_widget_show (zoom_checkbutton);
   gtk_box_pack_start (GTK_BOX (zoom_box), zoom_checkbutton, FALSE, FALSE, 4);
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(zoom_checkbutton), beatflower_newconfig.zoombeat ? TRUE:FALSE);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(zoom_checkbutton), beatflower_newconfig.zoombeat ? TRUE:FALSE);
 
 
 
@@ -664,7 +666,7 @@ void beatflower_xmms_settings()
   gtk_spin_button_set_update_policy (GTK_SPIN_BUTTON (factor_spinbutton), GTK_UPDATE_IF_VALID);
 
 
-  
+
   rotate_frame = gtk_frame_new ("Rotate");
   gtk_widget_ref (rotate_frame);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "rotate_frame", rotate_frame,
@@ -679,7 +681,7 @@ void beatflower_xmms_settings()
   gtk_widget_show (rotate_box);
   gtk_container_add (GTK_CONTAINER (rotate_frame), rotate_box);
 
-	// GtkCheckButton: config.rotate
+  // GtkCheckButton: config.rotate
   rotate_checkbutton = gtk_check_button_new_with_label ("Rotate left/right by beat");
   gtk_widget_ref (rotate_checkbutton);
   gtk_object_set_data_full (GTK_OBJECT (beatflower_xmms_settings_win), "rotate_checkbutton", rotate_checkbutton,
@@ -687,7 +689,7 @@ void beatflower_xmms_settings()
   gtk_widget_show (rotate_checkbutton);
   gtk_box_pack_start (GTK_BOX (rotate_box), rotate_checkbutton, FALSE, FALSE, 4);
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rotate_checkbutton), beatflower_newconfig.rotatebeat ? TRUE:FALSE);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rotate_checkbutton), beatflower_newconfig.rotatebeat ? TRUE:FALSE);
 
 
 
@@ -777,13 +779,13 @@ void beatflower_xmms_settings()
 //  gtk_signal_connect (GTK_OBJECT (amplification_option_menu), "changed", GTK_SIGNAL_FUNC (on_amplification_option_changed), GTK_MENU(NULL));
 //  gtk_signal_connect (GTK_OBJECT (offset_option_menu), "changed", GTK_SIGNAL_FUNC (on_offset_option_changed), GTK_MENU(NULL));
 //
-	gtk_signal_connect (GTK_OBJECT (ok_button), "clicked", GTK_SIGNAL_FUNC(on_ok_button_clicked), NULL);
-	gtk_signal_connect (GTK_OBJECT (apply_button), "clicked", GTK_SIGNAL_FUNC(on_apply_button_clicked), NULL);
-	gtk_signal_connect (GTK_OBJECT (cancel_button), "clicked", GTK_SIGNAL_FUNC(on_cancel_button_clicked), NULL);
+  gtk_signal_connect (GTK_OBJECT (ok_button), "clicked", GTK_SIGNAL_FUNC(on_ok_button_clicked), NULL);
+  gtk_signal_connect (GTK_OBJECT (apply_button), "clicked", GTK_SIGNAL_FUNC(on_apply_button_clicked), NULL);
+  gtk_signal_connect (GTK_OBJECT (cancel_button), "clicked", GTK_SIGNAL_FUNC(on_cancel_button_clicked), NULL);
 
-	gtk_signal_connect (GTK_OBJECT (blur_checkbutton), "clicked", GTK_SIGNAL_FUNC(on_blur_checkbutton_clicked), NULL);
-	gtk_signal_connect (GTK_OBJECT (zoom_checkbutton), "clicked", GTK_SIGNAL_FUNC(on_zoom_checkbutton_clicked), NULL);
-	gtk_signal_connect (GTK_OBJECT (fullscreen_checkbutton), "clicked", GTK_SIGNAL_FUNC(on_fullscreen_checkbutton_clicked), NULL);
+  gtk_signal_connect (GTK_OBJECT (blur_checkbutton), "clicked", GTK_SIGNAL_FUNC(on_blur_checkbutton_clicked), NULL);
+  gtk_signal_connect (GTK_OBJECT (zoom_checkbutton), "clicked", GTK_SIGNAL_FUNC(on_zoom_checkbutton_clicked), NULL);
+  gtk_signal_connect (GTK_OBJECT (fullscreen_checkbutton), "clicked", GTK_SIGNAL_FUNC(on_fullscreen_checkbutton_clicked), NULL);
 
 
   /* gtk_signal_connect (GTK_OBJECT (color3), "color_set",
@@ -804,7 +806,7 @@ void beatflower_xmms_settings()
 
 void on_fullscreen_checkbutton_clicked(GtkCheckButton *checkbutton)
 {
-	gboolean fullscreen = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton)); 
+  gboolean fullscreen = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
 
   g_message("%s: fullscreen = %s", __PRETTY_FUNCTION__, fullscreen);
   beatflower_newconfig.fullscreen = fullscreen ;
@@ -816,9 +818,8 @@ void on_width_spinbutton_changed(GtkSpinButton *spinbutton)
 
   value = gtk_spin_button_get_value_as_int(spinbutton);
 
-  if(value > 160 && value < 1600)
-  {
-		g_message("%s: width = %u", __PRETTY_FUNCTION__, value);
+  if(value > 160 && value < 1600) {
+    g_message("%s: width = %u", __PRETTY_FUNCTION__, value);
     beatflower_newconfig.width = value;
   }
 }
@@ -829,9 +830,8 @@ void on_height_spinbutton_changed(GtkSpinButton *spinbutton)
 
   value = gtk_spin_button_get_value_as_int(spinbutton);
 
-  if(value > 160 && value < 1400)
-  {
-		g_message("%s: height = %u", __PRETTY_FUNCTION__, value);
+  if(value > 160 && value < 1400) {
+    g_message("%s: height = %u", __PRETTY_FUNCTION__, value);
     beatflower_newconfig.height = value;
   }
 }
@@ -879,7 +879,7 @@ void on_mode_option_changed(GtkMenuItem *item, GtkMenu *menu)
 
   active = gtk_menu_get_active(GTK_MENU(menu));
   index = g_list_index(gtk_container_children(GTK_CONTAINER(menu)), active);
-	g_message("%s: color_mode = %i", __PRETTY_FUNCTION__, index);
+  g_message("%s: color_mode = %i", __PRETTY_FUNCTION__, index);
   beatflower_newconfig.color_mode = index;
 }
 
@@ -890,7 +890,7 @@ void on_draw_option_changed(GtkMenuItem *item, GtkMenu *menu)
 
   active = gtk_menu_get_active(GTK_MENU(menu));
   index = g_list_index(gtk_container_children(GTK_CONTAINER(menu)), active);
-	g_message("%s: draw_mode = %i", __PRETTY_FUNCTION__, index);
+  g_message("%s: draw_mode = %i", __PRETTY_FUNCTION__, index);
   beatflower_newconfig.draw_mode = index;
 }
 
@@ -901,7 +901,7 @@ void on_samples_option_changed(GtkMenuItem *item, GtkMenu *menu)
 
   active = gtk_menu_get_active(GTK_MENU(menu));
   index = g_list_index(gtk_container_children(GTK_CONTAINER(menu)), active);
-	g_message("%s: samples_mode = %i", __PRETTY_FUNCTION__, index);
+  g_message("%s: samples_mode = %i", __PRETTY_FUNCTION__, index);
   beatflower_newconfig.samples_mode = index;
 }
 
@@ -912,7 +912,7 @@ void on_amplification_option_changed(GtkMenuItem *item, GtkMenu *menu)
 
   active = gtk_menu_get_active(GTK_MENU(menu));
   index = g_list_index(gtk_container_children(GTK_CONTAINER(menu)), active);
-	g_message("%s: amplification_mode = %i", __PRETTY_FUNCTION__, index);
+  g_message("%s: amplification_mode = %i", __PRETTY_FUNCTION__, index);
   beatflower_newconfig.amplification_mode = index;
 }
 
@@ -923,29 +923,31 @@ void on_offset_option_changed(GtkMenuItem *item, GtkMenu *menu)
 
   active = gtk_menu_get_active(GTK_MENU(menu));
   index = g_list_index(gtk_container_children(GTK_CONTAINER(menu)), active);
-	g_message("%s: offset_mode = %i", __PRETTY_FUNCTION__, index);
+  g_message("%s: offset_mode = %i", __PRETTY_FUNCTION__, index);
   beatflower_newconfig.offset_mode = index;
 }
 
 void on_blur_checkbutton_clicked(GtkCheckButton *checkbutton)
 {
   gboolean flag = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
-	g_message("%s: blur = %i", __PRETTY_FUNCTION__, flag);
+  g_message("%s: blur = %i", __PRETTY_FUNCTION__, flag);
   beatflower_newconfig.blur = flag;
 }
 
 void on_apply_button_clicked(GtkButton *button)
 {
   beatflower_xmms_config_save(&beatflower_newconfig);
- 
+
   //SDL_LockMutex(beatflower_config_mutex);
   beatflower_config = beatflower_newconfig;
   //SDL_UnlockMutex(beatflower_config_mutex);
 
-	//beatflower_xmms_config_save(&beatflower_config);
+  //beatflower_xmms_config_save(&beatflower_config);
 
   SDL_LockMutex(beatflower_status_mutex);
-  if(beatflower_playing) beatflower_reset = TRUE;
+  if(beatflower_playing) {
+    beatflower_reset = TRUE;
+  }
   SDL_UnlockMutex(beatflower_status_mutex);
 }
 
@@ -953,7 +955,7 @@ void on_cancel_button_clicked(GtkButton *button)
 {
   gtk_widget_destroy((GtkWidget *)beatflower_xmms_settings_win);
 
-	beatflower_newconfig = beatflower_config;
+  beatflower_newconfig = beatflower_config;
 }
 
 void on_ok_button_clicked(GtkButton *button)
@@ -976,8 +978,8 @@ void on_ok_button_clicked(GtkButton *button)
 */
 void on_zoom_checkbutton_clicked(GtkCheckButton *checkbutton)
 {
-	gboolean flag = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
-	
+  gboolean flag = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
+
   beatflower_newconfig.zoombeat = flag;
 }
 
@@ -987,11 +989,10 @@ void on_factor_spinbutton_changed(GtkSpinButton *spinbutton)
 
   value = gtk_spin_button_get_value_as_float(spinbutton);
 
-  if(value > 0)
-  {
+  if(value > 0) {
     beatflower_newconfig.factor = value;
-   
-	}
+
+  }
 }
 
 void on_rotate_checkbutton_clicked(GtkCheckButton *checkbutton)
@@ -1005,8 +1006,7 @@ void on_angle_spinbutton_changed(GtkSpinButton *spinbutton)
 
   value = gtk_spin_button_get_value_as_float(spinbutton);
 
-  if(value <= 180 && value >= -180)
-  {
+  if(value <= 180 && value >= -180) {
     beatflower_newconfig.angle = value;
   }
 }

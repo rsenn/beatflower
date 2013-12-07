@@ -76,8 +76,9 @@ void beatflower_xmms_init()
 
   SDL_LockMutex(beatflower_config_mutex);
 
-  if(!beatflower_config_loaded)
+  if(!beatflower_config_loaded) {
     beatflower_xmms_config_load(&beatflower_config);
+  }
 
   SDL_UnlockMutex(beatflower_config_mutex);
 
@@ -98,8 +99,9 @@ void beatflower_xmms_cleanup()
   beatflower_playing = FALSE;
   SDL_UnlockMutex(beatflower_status_mutex);
 
-	if(beatflower_thread)
-		    SDL_WaitThread(beatflower_thread, NULL);
+  if(beatflower_thread) {
+    SDL_WaitThread(beatflower_thread, NULL);
+  }
 }
 
 void beatflower_xmms_playback_start()

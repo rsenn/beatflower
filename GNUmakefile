@@ -58,3 +58,5 @@ install: all
 		echo -e "$$CMD" 1>&2; eval "$$CMD"; \
   done
 
+astyle:
+	astyle --options=none --style=1tbs --indent=spaces=2 *.c *.h

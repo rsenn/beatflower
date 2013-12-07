@@ -33,15 +33,12 @@ void beatflower_xmms_config_load(config_t *cfg)
   g_message("%s:", __PRETTY_FUNCTION__);
 
   filename = g_strconcat(g_get_home_dir(), "/.xmms/config", NULL);
-	
-  if(!(f = xmms_cfg_open_file(filename))) // && !(f = xmms_cfg_new()))
-  {
+
+  if(!(f = xmms_cfg_open_file(filename))) { // && !(f = xmms_cfg_new()))
     g_warning("Could not open XMMS beatflower config '%s', settings defaults...", filename);
     config_set_defaults(cfg);
-   // beatflower_xmms_config_save(cfg);
-  }
-  else
-  {
+    // beatflower_xmms_config_save(cfg);
+  } else {
     xmms_cfg_read_boolean(f, PACKAGE, "fullscreen", &cfg->fullscreen);
     xmms_cfg_read_int(f, PACKAGE, "width", &cfg->width);
     xmms_cfg_read_int(f, PACKAGE, "height", &cfg->height);
@@ -60,7 +57,7 @@ void beatflower_xmms_config_load(config_t *cfg)
     xmms_cfg_read_boolean(f, PACKAGE, "zoombeat", &cfg->zoombeat);
     xmms_cfg_read_boolean(f, PACKAGE, "rotatebeat", &cfg->rotatebeat);
 
-		xmms_cfg_free(f);
+    xmms_cfg_free(f);
   }
 
   g_free(filename);
@@ -77,8 +74,9 @@ void beatflower_xmms_config_save(config_t *cfg)
 
   filename = g_strconcat(g_get_home_dir(), "/.xmms/config", NULL);
 
-  if(!(f = xmms_cfg_open_file(filename)))
+  if(!(f = xmms_cfg_open_file(filename))) {
     f = xmms_cfg_new();
+  }
 
   xmms_cfg_write_boolean(f, PACKAGE, "fullscreen", cfg->fullscreen);
   xmms_cfg_write_int(f, PACKAGE, "width", cfg->width);
@@ -97,17 +95,16 @@ void beatflower_xmms_config_save(config_t *cfg)
   xmms_cfg_write_double(f, PACKAGE, "angle", cfg->angle);
   xmms_cfg_write_boolean(f, PACKAGE, "zoombeat", cfg->zoombeat);
   xmms_cfg_write_boolean(f, PACKAGE, "rotatebeat", cfg->rotatebeat);
-  
-	g_message("Writing XMMS beatflower config to '%s' ...", filename);
-  
-	xmms_cfg_write_file(f, filename);
+
+  g_message("Writing XMMS beatflower config to '%s' ...", filename);
+
+  xmms_cfg_write_file(f, filename);
   xmms_cfg_free(f);
 
-	g_free(filename);
+  g_free(filename);
 
-	if(beatflower_xmms_settings_win)
-	{
-					gtk_widget_destroy(beatflower_xmms_settings_win);
-					beatflower_xmms_settings_win = NULL;
-	}
+  if(beatflower_xmms_settings_win) {
+    gtk_widget_destroy(beatflower_xmms_settings_win);
+    beatflower_xmms_settings_win = NULL;
+  }
 }
