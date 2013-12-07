@@ -38,7 +38,8 @@ static void beatflower_xmms_render_pcm(short data[2][512]);
 static void beatflower_xmms_render_freq(short data[2][256]);
 static void beatflower_xmms_about();
 
-static VisPlugin beatflower = {
+static VisPlugin beatflower =
+{
   NULL,
   NULL,
   0, /* session id, initialized by xmms */
@@ -76,7 +77,8 @@ void beatflower_xmms_init()
 
   SDL_LockMutex(beatflower_config_mutex);
 
-  if(!beatflower_config_loaded) {
+  if(!beatflower_config_loaded)
+  {
     beatflower_xmms_config_load(&beatflower_config);
   }
 
@@ -99,7 +101,8 @@ void beatflower_xmms_cleanup()
   beatflower_playing = FALSE;
   SDL_UnlockMutex(beatflower_status_mutex);
 
-  if(beatflower_thread) {
+  if(beatflower_thread)
+  {
     SDL_WaitThread(beatflower_thread, NULL);
   }
 }

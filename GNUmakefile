@@ -59,4 +59,15 @@ install: all
   done
 
 astyle:
-	astyle --options=none --style=1tbs --indent=spaces=2 *.c *.h
+	astyle \
+		--style=bsd \
+		--options=none \
+		--indent=spaces=2 \
+		--unpad-paren \
+		--break-closing-brackets \
+		--keep-one-line-blocks \
+		--keep-one-line-statements \
+		--indent-preprocessor \
+		--indent-cases \
+		--break-blocks=all \
+		$(SOURCES)

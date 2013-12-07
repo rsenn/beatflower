@@ -63,7 +63,7 @@ gint16       beatflower_freq_data[2][256];
 static SDL_Surface *screen;
 static unsigned int color_table[512];
 static unsigned int samples;
-static void       (*scope)(short data[512]);
+static void (*scope)(short data[512]);
 static Sint32       width;
 static Sint32       height;
 static Sint32       sine_table[512];
@@ -126,7 +126,8 @@ void config_set_defaults(config_t *cfg)
 
 static void create_color_table()
 {
-  if(color_mode == COLOR_2_GRADIENT) {
+  if(color_mode == COLOR_2_GRADIENT)
+  {
     register int red, green, blue;
     register int dr, dg, db;
     int i;
@@ -143,7 +144,10 @@ static void create_color_table()
       color_table[i] = ((((red   + ((i * dr) >> 9)) << RED_SHIFT)   & RED_MASK) |
                         (((green + ((i * dg) >> 9)) << GREEN_SHIFT) & GREEN_MASK) |
                         (((blue  + ((i * db) >> 9)) << BLUE_SHIFT)  & BLUE_MASK));
-  } else if(color_mode == COLOR_3_GRADIENT) {
+  }
+
+  else if(color_mode == COLOR_3_GRADIENT)
+  {
     register int red, green, blue;
     register int dr, dg, db;
     int i;
@@ -198,13 +202,16 @@ static void create_color_table()
   p += (x1 * xinc) + (y1 * yinc);
 
   /* swap so line can be calculated from left-top to right-bottom */
-  if(y1 > y2) {
+  if(y1 > y2)
+  {
     temp = y2;
     y2 = y1;
     y1 = temp;
     yinc = -yinc;
   }
-  if(x1 > x2) {
+
+  if(x1 > x2)
+  {
     temp = x2;
     x2 = x1;
     x1 = temp;
@@ -222,7 +229,8 @@ static void create_color_table()
       }*/
 
   /* swap all x and y stuff when dy > dx */
-  if(dy > dx) {
+  if(dy > dx)
+  {
     temp = yinc;
     yinc = xinc;
     xinc = temp;
@@ -241,14 +249,20 @@ static void create_color_table()
   y = y1;
   d = 2 * dy - dx;
 
-  for(x = x1; x < x2; x++) {
-    if(d < 0) {
+  for(x = x1; x < x2; x++)
+  {
+    if(d < 0)
+    {
       d += 2 * dy;
-    } else {
+    }
+
+    else
+    {
       d += 2 * (dy - dx);
       y++;
       p += yinc;
     }
+
     p += xinc;
     *(Uint32 *)p = color;
   }
@@ -259,7 +273,8 @@ static void create_sine_tables()
   Sint32    i;
   double angle = 0;
 
-  for(i = 0; i < samples; i++) {
+  for(i = 0; i < samples; i++)
+  {
     angle += M_2PI / samples;
     sine_table[i]   = sin(angle) * (radius - 1);
     cosine_table[i] = cos(angle) * (radius - 1);
@@ -273,9 +288,13 @@ static void create_sine_tables()
   fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
   fflush(stderr);
 
-  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE) < 0) {
+  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE) < 0)
+  {
     g_error("SDL_Init() failed!");
-  } else {
+  }
+
+  else
+  {
     g_message("SDL_Init() ok.");
   }
 
@@ -301,7 +320,8 @@ static void create_sine_tables()
 #else
 
   // Initialise libSDL.
-  if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+  if(SDL_Init(SDL_INIT_VIDEO) < 0)
+  {
     g_message("Could not initialize SDL: %s.\n", SDL_GetError());
     return;
   }
@@ -313,7 +333,9 @@ static void create_sine_tables()
                           SDL_WINDOWPOS_UNDEFINED,
                           beatflower_config.width, beatflower_config.height,
                           SDL_WINDOW_SHOWN/*|SDL_WINDOW_RESIZABLE*/);
-  if (!window) {
+
+  if(!window)
+  {
     g_error("Couldn't create window: %s\n", SDL_GetError());
     return;
     //quit(3);
@@ -370,13 +392,18 @@ static void create_sine_tables()
   blue  = (((c1 >> BLUE_SHIFT)  & 0xff) + ((c2 >> BLUE_SHIFT)  & 0xff) +
            ((c3 >> BLUE_SHIFT)  & 0xff) + ((c4 >> BLUE_SHIFT)  & 0xff));
 
-  if(red >= decay) {
+  if(red >= decay)
+  {
     red -= decay;
   }
-  if(green >= decay) {
+
+  if(green >= decay)
+  {
     green -= decay;
   }
-  if(blue >= decay) {
+
+  if(blue >= decay)
+  {
     blue -= decay;
   }
 
@@ -401,12 +428,14 @@ static void create_sine_tables()
   newx += width >> 1;
   newy += height >> 1;
 
-  if(newx >= width || newx < 0 || newy >= height || newy < 0) {
+  if(newx >= width || newx < 0 || newy >= height || newy < 0)
+  {
     newx = 0;
     newy = 0;
   }
 
-  if(newx < 0 || newx >= width || newy < 0 || newy > height) {
+  if(newx < 0 || newx >= width || newy < 0 || newy > height)
+  {
     newx = width >> 1;
     newy = height >> 1;
   }
@@ -429,12 +458,14 @@ static void create_sine_tables()
   newx += width >> 1;
   newy += height >> 1;
 
-  if(newx >= width || newx < 0 || newy >= height || newy < 0) {
+  if(newx >= width || newx < 0 || newy >= height || newy < 0)
+  {
     newx = 0;
     newy = 0;
   }
 
-  if(newx < 0 || newx >= width || newy < 0 || newy > height) {
+  if(newx < 0 || newx >= width || newy < 0 || newy > height)
+  {
     newx = width >> 1;
     newy = height >> 1;
   }
@@ -452,7 +483,8 @@ static void init_transform()
   i = 0;
 
   for(y = 1; y < height - 1; y++)
-    for(x = 1; x < width - 1; x++) {
+    for(x = 1; x < width - 1; x++)
+    {
       tx = x + 1;
       ty = y;
       zoom(&tx, &ty);
@@ -484,15 +516,20 @@ static void blur()
   i = 0;
 
   for(y = 1; y < height - 1; y++)
-    for(x = 1; x < width - 1; x++) {
+    for(x = 1; x < width - 1; x++)
+    {
       if((y == (height >> 1) || y == (height >> 1) + 1) &&
-          (x == (width >> 1) || x == (width >> 1) + 1)) {
+          (x == (width >> 1) || x == (width >> 1) + 1))
+      {
         new[y * (pitch >> 2) + x] = 0;
-      } else
+      }
+
+      else
         new[y * (pitch >> 2) + x] = average(*transform_table[i + 3],
                                             *transform_table[i + 2],
                                             *transform_table[i + 1],
                                             *transform_table[i]);
+
       i += 4;
     }
 
@@ -509,11 +546,13 @@ static /*__inline__*/ int amplification(int value)
 {
   register int v = value;
 
-  if(amp_mode == AMP_HALF) {
+  if(amp_mode == AMP_HALF)
+  {
     return v / 2;
   }
 
-  if(amp_mode == AMP_DOUBLE) {
+  if(amp_mode == AMP_DOUBLE)
+  {
     return v * 2;
   }
 
@@ -526,10 +565,13 @@ static /*__inline__*/ int offset(int value)
 
   v += offset_mode;
 
-  if(v >  32767) {
+  if(v >  32767)
+  {
     return  32767;
   }
-  if(v < -32768) {
+
+  if(v < -32768)
+  {
     return -32768;
   }
 
@@ -548,7 +590,8 @@ static void circle_scope(short data[512])
   firstx = thisx = ((sine_table[0] * (offset(data[0]) + 32768)) >> 16) + (width >> 1);
   firsty = thisy = ((cosine_table[0] * (offset(data[0]) + 32768)) >> 16) + (height >> 1);
 
-  for(i = 1, idx = 0; i < samples; i++, idx += inc) {
+  for(i = 1, idx = 0; i < samples; i++, idx += inc)
+  {
     nextx = ((sine_table[i] * (offset(data[idx]) + 32768)) >> 16) + (width >> 1);
     nexty = ((cosine_table[i] * (offset(data[idx]) + 32768)) >> 16) + (height >> 1);
 
@@ -566,7 +609,8 @@ static void line_scope(short data[512])
   register Sint32 x, y;
   register Sint32 i, idx, inc = 512 / samples;
 
-  for(i = 0, idx = 0; i < samples; i++, idx += inc) {
+  for(i = 0, idx = 0; i < samples; i++, idx += inc)
+  {
     x = ((sine_table[i] * (offset(data[idx]) + 32768)) >> 16) + (width >> 1);
     y = ((cosine_table[i] * (offset(data[idx]) + 32768)) >> 16) + (height >> 1);
 
@@ -579,7 +623,8 @@ static void dot_scope(short data[512])
   register Sint32 x, y;
   register Sint32 i, idx, inc = 512 / samples;
 
-  for(i = 0, idx = 0; i < samples; i++, idx += inc) {
+  for(i = 0, idx = 0; i < samples; i++, idx += inc)
+  {
     x = ((sine_table[i] * (offset(data[i]) + 32768)) >> 16) + (width >> 1);
     y = ((cosine_table[i] * (offset(data[i]) + 32768)) >> 16) + (height >> 1);
 
@@ -592,7 +637,8 @@ static void ball_scope(short data[512])
   register Sint32 x, y;
   register Sint32 i, idx, inc = 512 / samples;
 
-  for(i = 0, idx = 0; i < samples; i++, idx += inc) {
+  for(i = 0, idx = 0; i < samples; i++, idx += inc)
+  {
     x = ((sine_table[i] * (offset(data[idx]) + 32768)) >> 16) + (width >> 1);
     y = ((cosine_table[i] * (offset(data[idx]) + 32768)) >> 16) + (height >> 1);
 
@@ -610,22 +656,31 @@ void find_color(Sint16 data[2][256])
   Sint32 count = 0;
   Sint32 i;
 
-  for(i = 0; i < 64; i++) {
+  for(i = 0; i < 64; i++)
+  {
     x = (data[0][i] + data[1][i]) >> 1;
 
-    if(x > 0) {
+    if(x > 0)
+    {
       count++;
       value += x;
     }
   }
 
-  if(count) {
+  if(count)
+  {
     value /= (count + 10);
-    if(value > 511) {
+
+    if(value > 511)
+    {
       value = 511;
     }
+
     color = color_table[value];
-  } else {
+  }
+
+  else
+  {
     color = color_table[0];
   }
 }
@@ -638,7 +693,8 @@ static bool check_finished()
 
   ret = beatflower_finished;
 
-  if(beatflower_reset) {
+  if(beatflower_reset)
+  {
     beatflower_reset = FALSE;
     init_engine();
   }
@@ -667,29 +723,35 @@ void *beatflower_thread_function(void *blah)
 
   init_engine();
 
-  while(!check_playing()) {
-    if(check_finished()) {
+  while(!check_playing())
+  {
+    if(check_finished())
+    {
       return NULL;
     }
 
     SDL_Delay(10);
   }
 
-  while(!check_finished()) {
+  while(!check_finished())
+  {
     SDL_LockMutex(beatflower_data_mutex);
     find_color(beatflower_freq_data);
     scope(beatflower_pcm_data[0]);
     SDL_UnlockMutex(beatflower_data_mutex);
 
-    if(check_playing()) {
+    if(check_playing())
+    {
       SDL_Flip(screen);
     }
 
-    if(blur_enable) {
+    if(blur_enable)
+    {
       blur();
     }
 
-    if(!blur_enable) {
+    if(!blur_enable)
+    {
       black();
     }
   }

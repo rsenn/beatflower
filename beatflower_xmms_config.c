@@ -34,11 +34,15 @@ void beatflower_xmms_config_load(config_t *cfg)
 
   filename = g_strconcat(g_get_home_dir(), "/.xmms/config", NULL);
 
-  if(!(f = xmms_cfg_open_file(filename))) { // && !(f = xmms_cfg_new()))
+  if(!(f = xmms_cfg_open_file(filename)))   // && !(f = xmms_cfg_new()))
+  {
     g_warning("Could not open XMMS beatflower config '%s', settings defaults...", filename);
     config_set_defaults(cfg);
     // beatflower_xmms_config_save(cfg);
-  } else {
+  }
+
+  else
+  {
     xmms_cfg_read_boolean(f, PACKAGE, "fullscreen", &cfg->fullscreen);
     xmms_cfg_read_int(f, PACKAGE, "width", &cfg->width);
     xmms_cfg_read_int(f, PACKAGE, "height", &cfg->height);
@@ -74,7 +78,8 @@ void beatflower_xmms_config_save(config_t *cfg)
 
   filename = g_strconcat(g_get_home_dir(), "/.xmms/config", NULL);
 
-  if(!(f = xmms_cfg_open_file(filename))) {
+  if(!(f = xmms_cfg_open_file(filename)))
+  {
     f = xmms_cfg_new();
   }
 
@@ -103,7 +108,8 @@ void beatflower_xmms_config_save(config_t *cfg)
 
   g_free(filename);
 
-  if(beatflower_xmms_settings_win) {
+  if(beatflower_xmms_settings_win)
+  {
     gtk_widget_destroy(beatflower_xmms_settings_win);
     beatflower_xmms_settings_win = NULL;
   }
