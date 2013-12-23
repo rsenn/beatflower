@@ -96,6 +96,8 @@ beatflower_xmms_init(void)
 void
 beatflower_xmms_cleanup(void)
 {
+  g_message("%s:", __PRETTY_FUNCTION__);
+
   pthread_mutex_lock(&beatflower_status_mutex);
   beatflower_finished = TRUE;
   beatflower_playing = FALSE;
@@ -108,6 +110,8 @@ beatflower_xmms_cleanup(void)
 void
 beatflower_xmms_playback_start(void)
 {
+  g_message("%s:", __PRETTY_FUNCTION__);
+
   pthread_mutex_lock(&beatflower_status_mutex);
   beatflower_playing = TRUE;
   pthread_mutex_unlock(&beatflower_status_mutex);
@@ -116,6 +120,8 @@ beatflower_xmms_playback_start(void)
 void
 beatflower_xmms_playback_stop(void)
 {
+  g_message("%s:", __PRETTY_FUNCTION__);
+
   pthread_mutex_lock(&beatflower_status_mutex);
   beatflower_playing = FALSE;
   pthread_mutex_unlock(&beatflower_status_mutex);
@@ -140,6 +146,7 @@ beatflower_xmms_render_freq(short data[2][256])
 void
 beatflower_xmms_about(void)
 {
+  g_message("%s:", __PRETTY_FUNCTION__);
 }
 
 
