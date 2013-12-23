@@ -33,7 +33,7 @@ XMMS_LIBS = $(shell xmms-config --libs)
 
 XMMS_PLUGIN = libbeatflower.so
 
-SOURCES = beatflower.c beatflower_xmms_plugin.c beatflower_xmms_settings.c beatflower_xmms_config.c beatflower_sdl_renderer.c
+SOURCES = beatflower.c beatflower_xmms_plugin.c beatflower_xmms_settings.c beatflower_xmms_config.c beatflower_renderer_sdl.c
 OBJECTS = $(SOURCES:%.c=%.o)
 HEADERS = beatflower.h
 TARGETS = $(XMMS_PLUGIN)
@@ -46,7 +46,7 @@ all: $(TARGETS)
 .c.o:
 	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $<
 
-beatflower_sdl_renderer.o: CFLAGS += $(SDL_CFLAGS)
+beatflower_renderer_sdl.o: CFLAGS += $(SDL_CFLAGS)
 beatflower.o beatflower_xmms_settings.o beatflower_xmms_config.o beatflower_xmms_plugin.o: CFLAGS += $(XMMS_CFLAGS) 
 
 $(XMMS_PLUGIN): LIBS += $(XMMS_LIBS) $(SDL_LIBS)

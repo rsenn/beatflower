@@ -27,8 +27,11 @@
 typedef struct 
 {
   void (*init)(void);
-  void *(*thread)(void *);
+  void* (*thread)(void *);
 } beatflower_renderer_t;
+
+extern const beatflower_renderer_t beatflower_renderer_sdl;
+
 
 #endif // BEATFLOWER_RENDERER_H__ 1
 

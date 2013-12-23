@@ -28,6 +28,15 @@
 #include <SDL.h>
 
 #include "beatflower.h"
+#include "beatflower_renderer.h"
+
+void beatflower_renderer_sdl_init();
+void *beatflower_renderer_sdl_thread(void *blah);
+
+const beatflower_renderer_t beatflower_renderer_sdl = {
+  .init = &beatflower_renderer_sdl_init,
+  .thread = &beatflower_renderer_sdl_thread,
+};
 
 /************************************* Constants ******************************************/
 
@@ -52,7 +61,6 @@ static void         dot_scope(short data[512]);
 static void         ball_scope(short data[512]);
 static void         circle_scope(short data[512]);
 static void         line_scope(short data[512]);
-static void         beatflower_renderer_sdl_init();
 static void         create_color_table();
 static void         line(Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2);
 static void         zoom(Sint32 *x, Sint32 *y);
