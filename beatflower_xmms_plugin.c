@@ -58,7 +58,8 @@ static VisPlugin beatflower_plugin =
 };
 
 /* the only non-static thing.... */
-VisPlugin *get_vplugin_info()
+VisPlugin 
+*get_vplugin_info(void)
 {
   return &beatflower_plugin;
 }
@@ -75,7 +76,9 @@ static void beatflower_xmms_log(const char *format, ...)
 }
 
 /* initialize values and start the beatflower beatflower_thread */
-void beatflower_xmms_init()
+void
+
+beatflower_xmms_init(void)
 {
   //pthread_attr_t attr;
 
@@ -103,7 +106,9 @@ void beatflower_xmms_init()
   pthread_create(&beatflower_thread, NULL, (void *)beatflower_renderer_sdl_thread, NULL);
 }
 
-void beatflower_xmms_cleanup()
+void
+
+beatflower_xmms_cleanup(void)
 {
   g_message("%s:", __PRETTY_FUNCTION__);
 
@@ -119,7 +124,9 @@ void beatflower_xmms_cleanup()
   }
 }
 
-void beatflower_xmms_playback_start()
+void
+
+beatflower_xmms_playback_start(void)
 {
   g_message("%s:", __PRETTY_FUNCTION__);
 
@@ -128,7 +135,9 @@ void beatflower_xmms_playback_start()
   pthread_mutex_unlock(&beatflower_status_mutex);
 }
 
-void beatflower_xmms_playback_stop()
+void
+
+beatflower_xmms_playback_stop(void)
 {
   g_message("%s:", __PRETTY_FUNCTION__);
 
@@ -137,21 +146,25 @@ void beatflower_xmms_playback_stop()
   pthread_mutex_unlock(&beatflower_status_mutex);
 }
 
-void beatflower_xmms_render_pcm(short data[2][512])
+void 
+beatflower_xmms_render_pcm(short data[2][512])
 {
   pthread_mutex_lock(&beatflower_data_mutex);
   memcpy(beatflower_pcm_data, data, 1024);
   pthread_mutex_unlock(&beatflower_data_mutex);
 }
 
-void beatflower_xmms_render_freq(short data[2][256])
+void 
+beatflower_xmms_render_freq(short data[2][256])
 {
   pthread_mutex_lock(&beatflower_data_mutex);
   memcpy(beatflower_freq_data, data, 512);
   pthread_mutex_unlock(&beatflower_data_mutex);
 }
 
-void beatflower_xmms_about()
+void
+
+beatflower_xmms_about(void)
 {
   g_message("%s:", __PRETTY_FUNCTION__);
 

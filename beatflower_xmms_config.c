@@ -25,7 +25,8 @@
 #include "beatflower.h"
 #include "beatflower_xmms.h"
 
-void beatflower_xmms_config_load(config_t *cfg)
+void 
+beatflower_xmms_config_load(config_t *cfg)
 {
   ConfigFile *f;
   gchar *filename;
@@ -69,7 +70,8 @@ void beatflower_xmms_config_load(config_t *cfg)
   beatflower_config_loaded = TRUE;
 }
 
-void beatflower_xmms_config_save(config_t *cfg)
+void 
+beatflower_xmms_config_save(config_t *cfg)
 {
   ConfigFile *f;
 

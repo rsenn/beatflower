@@ -69,7 +69,7 @@ static void         init_transform();
 
 
 static void
-create_color_table()
+create_color_table(void)
 {
   if(beatflower.color_mode == COLOR_2_GRADIENT)
   {
@@ -214,7 +214,7 @@ line(Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2)
 }
 
 static void
-create_sine_tables()
+create_sine_tables(void)
 {
   Sint32    i;
   double angle = 0;
@@ -324,7 +324,7 @@ rotate(register Sint32 *x, register Sint32 *y)
 }
 
 static void
-init_transform()
+init_transform(void)
 {
   Sint32 x, y, i, tx, ty;
 
@@ -359,7 +359,7 @@ init_transform()
 }
 
 static void
-blur()
+blur(void)
 {
   register Sint32 x, y, i;
   Uint32 *new = malloc(beatflower.pitch * beatflower.height);
@@ -389,7 +389,7 @@ blur()
 }
 
 static void
-black()
+black(void)
 {
   memset(beatflower.pixels, 0, beatflower.pitch * beatflower.height);
 }
@@ -469,7 +469,9 @@ ball_scope(short data[512])
 }
 
 /* initialize the beatflower engine */
-void beatflower_renderer_sdl_init()
+void
+
+beatflower_renderer_sdl_init(void)
 {
   fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
   fflush(stderr);
@@ -569,7 +571,8 @@ void beatflower_renderer_sdl_init()
 }
 
 
-void *beatflower_renderer_sdl_thread(void *blah)
+void 
+*beatflower_renderer_sdl_thread(void *blah)
 {
   fprintf(stderr,"%s()\n", __PRETTY_FUNCTION__);
   fflush(stderr);

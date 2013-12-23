@@ -47,6 +47,9 @@
 /************************************* Variables ****************************************/
 
 config_t     beatflower_config;
+beatflower_log_function *beatflower_log;
+pthread_t beatflower_thread;
+
 //config_t     beatflower_newconfig;
 pthread_mutex_t beatflower_status_mutex  = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t beatflower_data_mutex    = PTHREAD_MUTEX_INITIALIZER;
@@ -66,7 +69,8 @@ beatflower_state_t beatflower;
 void         config_set_defaults(config_t *beatflower_config);
 
 
-void config_set_defaults(config_t *cfg)
+void 
+config_set_defaults(config_t *cfg)
 {
   g_message("%s:", __PRETTY_FUNCTION__);
 
@@ -90,7 +94,8 @@ void config_set_defaults(config_t *cfg)
 }
 
 
-int beatflower_scope_amplification(int value)
+int 
+beatflower_scope_amplification(int value)
 {
   register int v = value;
 
@@ -107,7 +112,8 @@ int beatflower_scope_amplification(int value)
   return v;
 }
 
-int beatflower_scope_offset(int value)
+int 
+beatflower_scope_offset(int value)
 {
   register int v = beatflower_scope_amplification(value);
 
@@ -126,7 +132,8 @@ int beatflower_scope_offset(int value)
   return v;
 }
 
-void find_color(int16_t data[2][256])
+void 
+find_color(int16_t data[2][256])
 {
   uint32_t value = 0;
   int32_t x;
@@ -162,7 +169,8 @@ void find_color(int16_t data[2][256])
   }
 }
 
-bool beatflower_check_finished()
+bool 
+beatflower_check_finished(void)
 {
   bool ret;
 
@@ -181,7 +189,8 @@ bool beatflower_check_finished()
   return ret;
 }
 
- bool beatflower_check_playing()
+ bool 
+beatflower_check_playing(void)
 {
   bool ret;
 
