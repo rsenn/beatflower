@@ -42,12 +42,6 @@
 #define BLUE_SHIFT   0
 
 /************************************* Variables ****************************************/
-
-//config_t     beatflower_newconfig;
-/*static bool         reinit        = FALSE;*/
-//SDL_Thread  *beatflower_thread = NULL;       /* beatflower_thread that does the drawing */
-//beatflower.gint16       beatflower_pcm_data[2][512];    /* 2 channel pcm and freq data */
-//beatflower.gint16       beatflower_freq_data[2][256];
 static SDL_Surface *screen;
 
 /********************************* Functions *****************************************/
@@ -58,16 +52,16 @@ static void         dot_scope(short data[512]);
 static void         ball_scope(short data[512]);
 static void         circle_scope(short data[512]);
 static void         line_scope(short data[512]);
-static void         beatflower_sdl_renderer_init();
+static void         beatflower_renderer_sdl_init();
 static void         create_color_table();
 static void         line(Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2);
 static void         zoom(Sint32 *x, Sint32 *y);
 static void         rotate(Sint32 *x, Sint32 *y);
 static void         init_transform();
-static bool         check_finished();
 
 
-static void create_color_table()
+static void
+create_color_table()
 {
   if(beatflower.color_mode == COLOR_2_GRADIENT)
   {
@@ -127,8 +121,8 @@ static void create_color_table()
 
    when x1 = x2 and y1 = y2, nothing is drawed
 */
-/*__inline__*/ static void line(Uint32 x1, Uint32 y1,
-                                Uint32 x2, Uint32 y2)
+static void
+line(Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2)
 {
   register Sint32 dx;
   register Sint32 dy;
@@ -211,7 +205,8 @@ static void create_color_table()
   }
 }
 
-static void create_sine_tables()
+static void
+create_sine_tables()
 {
   Sint32    i;
   double angle = 0;
@@ -224,9 +219,249 @@ static void create_sine_tables()
   }
 }
 
+static Uint32
+average(Uint32 c1, Uint32 c2, Uint32 c3, Uint32 c4)
+{
+  register Uint32 red, green, blue;
+
+  red   = (((c1 >> RED_SHIFT)   & 0xff) + ((c2 >> RED_SHIFT)   & 0xff) +
+           ((c3 >> RED_SHIFT)   & 0xff) + ((c4 >> RED_SHIFT)   & 0xff));
+  green = (((c1 >> GREEN_SHIFT) & 0xff) + ((c2 >> GREEN_SHIFT) & 0xff) +
+           ((c3 >> GREEN_SHIFT) & 0xff) + ((c4 >> GREEN_SHIFT) & 0xff));
+  blue  = (((c1 >> BLUE_SHIFT)  & 0xff) + ((c2 >> BLUE_SHIFT)  & 0xff) +
+           ((c3 >> BLUE_SHIFT)  & 0xff) + ((c4 >> BLUE_SHIFT)  & 0xff));
+
+  if(red >= beatflower.decay)
+  {
+    red -= beatflower.decay;
+  }
+
+  if(green >= beatflower.decay)
+  {
+    green -= beatflower.decay;
+  }
+
+  if(blue >= beatflower.decay)
+  {
+    blue -= beatflower.decay;
+  }
+
+  red >>= 2;
+  green >>= 2;
+  blue >>= 2;
+
+  return (red << RED_SHIFT | green << GREEN_SHIFT | blue << BLUE_SHIFT);
+}
+
+static void
+zoom(register Sint32 *x, register Sint32 *y)
+{
+  Sint32 newx, newy;
+  double bx, by;
+
+  newx = *x - (beatflower.width >> 1);
+  newy = *y - (beatflower.height >> 1);
+  bx = newx * beatflower.factor;
+  by = newy * beatflower.factor;
+  newx = bx;
+  newy = by;
+  newx += beatflower.width >> 1;
+  newy += beatflower.height >> 1;
+
+  if(newx >= beatflower.width || newx < 0 || newy >= beatflower.height || newy < 0)
+  {
+    newx = 0;
+    newy = 0;
+  }
+
+  if(newx < 0 || newx >= beatflower.width || newy < 0 || newy > beatflower.height)
+  {
+    newx = beatflower.width >> 1;
+    newy = beatflower.height >> 1;
+  }
+
+  *x = newx;
+  *y = newy;
+}
+
+static void
+rotate(register Sint32 *x, register Sint32 *y)
+{
+  Sint32 newx, newy;
+  double bx, by;
+
+  newx = *x - (beatflower.width >> 1);
+  newy = *y - (beatflower.height >> 1);
+  bx = newx * cos(beatflower.angle) + newy * sin(beatflower.angle);
+  by = newy * cos(beatflower.angle) - newx * sin(beatflower.angle);
+  newx = bx;
+  newy = by;
+  newx += beatflower.width >> 1;
+  newy += beatflower.height >> 1;
+
+  if(newx >= beatflower.width || newx < 0 || newy >= beatflower.height || newy < 0)
+  {
+    newx = 0;
+    newy = 0;
+  }
+
+  if(newx < 0 || newx >= beatflower.width || newy < 0 || newy > beatflower.height)
+  {
+    newx = beatflower.width >> 1;
+    newy = beatflower.height >> 1;
+  }
+
+  *x = newx;
+  *y = newy;
+}
+
+static void
+init_transform()
+{
+  Sint32 x, y, i, tx, ty;
+
+  beatflower.transform_table = malloc(beatflower.height * beatflower.width * sizeof(Uint32 *) * 4);
+
+  i = 0;
+
+  for(y = 1; y < beatflower.height - 1; y++)
+    for(x = 1; x < beatflower.width - 1; x++)
+    {
+      tx = x + 1;
+      ty = y;
+      zoom(&tx, &ty);
+      rotate(&tx, &ty);
+      beatflower.transform_table[i++] = beatflower.pixels + (beatflower.pitch >> 2) * ty + tx;
+      tx = x - 1;
+      ty = y;
+      zoom(&tx, &ty);
+      rotate(&tx, &ty);
+      beatflower.transform_table[i++] = beatflower.pixels + (beatflower.pitch >> 2) * ty + tx;
+      tx = x;
+      ty = y + 1;
+      zoom(&tx, &ty);
+      rotate(&tx, &ty);
+      beatflower.transform_table[i++] = beatflower.pixels + (beatflower.pitch >> 2) * ty + tx;
+      tx = x;
+      ty = y - 1;
+      zoom(&tx, &ty);
+      rotate(&tx, &ty);
+      beatflower.transform_table[i++] = beatflower.pixels + (beatflower.pitch >> 2) * ty + tx;
+    }
+}
+
+static void
+blur()
+{
+  register Sint32 x, y, i;
+  Uint32 *new = malloc(beatflower.pitch * beatflower.height);
+
+  i = 0;
+
+  for(y = 1; y < beatflower.height - 1; y++)
+    for(x = 1; x < beatflower.width - 1; x++)
+    {
+      if((y == (beatflower.height >> 1) || y == (beatflower.height >> 1) + 1) &&
+          (x == (beatflower.width >> 1) || x == (beatflower.width >> 1) + 1))
+      {
+        new[y * (beatflower.pitch >> 2) + x] = 0;
+      }
+
+      else
+        new[y * (beatflower.pitch >> 2) + x] = average(*beatflower.transform_table[i + 3],
+                                            *beatflower.transform_table[i + 2],
+                                            *beatflower.transform_table[i + 1],
+                                            *beatflower.transform_table[i]);
+
+      i += 4;
+    }
+
+  memcpy(beatflower.pixels, new, beatflower.pitch * beatflower.height);
+  free(new);
+}
+
+static void
+black()
+{
+  memset(beatflower.pixels, 0, beatflower.pitch * beatflower.height);
+}
+
+static void
+circle_scope(short data[512])
+{
+  register Sint32 thisx, thisy;
+  register Sint32 nextx, nexty;
+  Sint32 firstx, firsty;
+  Sint32 i, idx, inc = 512 / beatflower.samples;
+
+
+  firstx = thisx = ((beatflower.sine_table[0] * (beatflower_scope_offset(data[0]) + 32768)) >> 16) + (beatflower.width >> 1);
+  firsty = thisy = ((beatflower.cosine_table[0] * (beatflower_scope_offset(data[0]) + 32768)) >> 16) + (beatflower.height >> 1);
+
+  for(i = 1, idx = 0; i < beatflower.samples; i++, idx += inc)
+  {
+    nextx = ((beatflower.sine_table[i] * (beatflower_scope_offset(data[idx]) + 32768)) >> 16) + (beatflower.width >> 1);
+    nexty = ((beatflower.cosine_table[i] * (beatflower_scope_offset(data[idx]) + 32768)) >> 16) + (beatflower.height >> 1);
+
+    line(thisx, thisy, nextx, nexty);
+
+    thisx = nextx;
+    thisy = nexty;
+  }
+
+  line(thisx, thisy, firstx, firsty);
+}
+
+static void
+line_scope(short data[512])
+{
+  register Sint32 x, y;
+  register Sint32 i, idx, inc = 512 / beatflower.samples;
+
+  for(i = 0, idx = 0; i < beatflower.samples; i++, idx += inc)
+  {
+    x = ((beatflower.sine_table[i] * (beatflower_scope_offset(data[idx]) + 32768)) >> 16) + (beatflower.width >> 1);
+    y = ((beatflower.cosine_table[i] * (beatflower_scope_offset(data[idx]) + 32768)) >> 16) + (beatflower.height >> 1);
+
+    line(beatflower.width >> 1, beatflower.height >> 1, x, y);
+  }
+}
+
+static void
+dot_scope(short data[512])
+{
+  register Sint32 x, y;
+  register Sint32 i, idx, inc = 512 / beatflower.samples;
+
+  for(i = 0, idx = 0; i < beatflower.samples; i++, idx += inc)
+  {
+    x = ((beatflower.sine_table[i] * (beatflower_scope_offset(data[i]) + 32768)) >> 16) + (beatflower.width >> 1);
+    y = ((beatflower.cosine_table[i] * (beatflower_scope_offset(data[i]) + 32768)) >> 16) + (beatflower.height >> 1);
+
+    beatflower.pixels[y * (beatflower.pitch >> 2) + x] = beatflower.color;
+  }
+}
+
+static void
+ball_scope(short data[512])
+{
+  register Sint32 x, y;
+  register Sint32 i, idx, inc = 512 / beatflower.samples;
+
+  for(i = 0, idx = 0; i < beatflower.samples; i++, idx += inc)
+  {
+    x = ((beatflower.sine_table[i] * (beatflower_scope_offset(data[idx]) + 32768)) >> 16) + (beatflower.width >> 1);
+    y = ((beatflower.cosine_table[i] * (beatflower_scope_offset(data[idx]) + 32768)) >> 16) + (beatflower.height >> 1);
+
+    beatflower.pixels[y * (beatflower.pitch >> 2) + x + 1] = beatflower.color;
+    beatflower.pixels[y * (beatflower.pitch >> 2) + x - 1] = beatflower.color;
+    beatflower.pixels[(y + 1) * (beatflower.pitch >> 2) + x] = beatflower.color;
+    beatflower.pixels[(y - 1) * (beatflower.pitch >> 2) + x] = beatflower.color;
+  }
+}
 
 /* initialize the beatflower engine */
-void beatflower_sdl_renderer_init()
+void beatflower_renderer_sdl_init()
 {
   fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
   fflush(stderr);
@@ -325,280 +560,17 @@ void beatflower_sdl_renderer_init()
   pthread_mutex_unlock(&beatflower_config_mutex);
 }
 
-/*__inline__*/ static Uint32 average(Uint32 c1, Uint32 c2,
-                                     Uint32 c3, Uint32 c4)
-{
-  register Uint32 red, green, blue;
 
-  red   = (((c1 >> RED_SHIFT)   & 0xff) + ((c2 >> RED_SHIFT)   & 0xff) +
-           ((c3 >> RED_SHIFT)   & 0xff) + ((c4 >> RED_SHIFT)   & 0xff));
-  green = (((c1 >> GREEN_SHIFT) & 0xff) + ((c2 >> GREEN_SHIFT) & 0xff) +
-           ((c3 >> GREEN_SHIFT) & 0xff) + ((c4 >> GREEN_SHIFT) & 0xff));
-  blue  = (((c1 >> BLUE_SHIFT)  & 0xff) + ((c2 >> BLUE_SHIFT)  & 0xff) +
-           ((c3 >> BLUE_SHIFT)  & 0xff) + ((c4 >> BLUE_SHIFT)  & 0xff));
-
-  if(red >= beatflower.decay)
-  {
-    red -= beatflower.decay;
-  }
-
-  if(green >= beatflower.decay)
-  {
-    green -= beatflower.decay;
-  }
-
-  if(blue >= beatflower.decay)
-  {
-    blue -= beatflower.decay;
-  }
-
-  red >>= 2;
-  green >>= 2;
-  blue >>= 2;
-
-  return (red << RED_SHIFT | green << GREEN_SHIFT | blue << BLUE_SHIFT);
-}
-
-/*__inline__*/ static void zoom(register Sint32 *x, register Sint32 *y)
-{
-  Sint32 newx, newy;
-  double bx, by;
-
-  newx = *x - (beatflower.width >> 1);
-  newy = *y - (beatflower.height >> 1);
-  bx = newx * beatflower.factor;
-  by = newy * beatflower.factor;
-  newx = bx;
-  newy = by;
-  newx += beatflower.width >> 1;
-  newy += beatflower.height >> 1;
-
-  if(newx >= beatflower.width || newx < 0 || newy >= beatflower.height || newy < 0)
-  {
-    newx = 0;
-    newy = 0;
-  }
-
-  if(newx < 0 || newx >= beatflower.width || newy < 0 || newy > beatflower.height)
-  {
-    newx = beatflower.width >> 1;
-    newy = beatflower.height >> 1;
-  }
-
-  *x = newx;
-  *y = newy;
-}
-
-/*__inline__*/ static void rotate(register Sint32 *x, register Sint32 *y)
-{
-  Sint32 newx, newy;
-  double bx, by;
-
-  newx = *x - (beatflower.width >> 1);
-  newy = *y - (beatflower.height >> 1);
-  bx = newx * cos(beatflower.angle) + newy * sin(beatflower.angle);
-  by = newy * cos(beatflower.angle) - newx * sin(beatflower.angle);
-  newx = bx;
-  newy = by;
-  newx += beatflower.width >> 1;
-  newy += beatflower.height >> 1;
-
-  if(newx >= beatflower.width || newx < 0 || newy >= beatflower.height || newy < 0)
-  {
-    newx = 0;
-    newy = 0;
-  }
-
-  if(newx < 0 || newx >= beatflower.width || newy < 0 || newy > beatflower.height)
-  {
-    newx = beatflower.width >> 1;
-    newy = beatflower.height >> 1;
-  }
-
-  *x = newx;
-  *y = newy;
-}
-
-static void init_transform()
-{
-  Sint32 x, y, i, tx, ty;
-
-  beatflower.transform_table = malloc(beatflower.height * beatflower.width * sizeof(Uint32 *) * 4);
-
-  i = 0;
-
-  for(y = 1; y < beatflower.height - 1; y++)
-    for(x = 1; x < beatflower.width - 1; x++)
-    {
-      tx = x + 1;
-      ty = y;
-      zoom(&tx, &ty);
-      rotate(&tx, &ty);
-      beatflower.transform_table[i++] = beatflower.pixels + (beatflower.pitch >> 2) * ty + tx;
-      tx = x - 1;
-      ty = y;
-      zoom(&tx, &ty);
-      rotate(&tx, &ty);
-      beatflower.transform_table[i++] = beatflower.pixels + (beatflower.pitch >> 2) * ty + tx;
-      tx = x;
-      ty = y + 1;
-      zoom(&tx, &ty);
-      rotate(&tx, &ty);
-      beatflower.transform_table[i++] = beatflower.pixels + (beatflower.pitch >> 2) * ty + tx;
-      tx = x;
-      ty = y - 1;
-      zoom(&tx, &ty);
-      rotate(&tx, &ty);
-      beatflower.transform_table[i++] = beatflower.pixels + (beatflower.pitch >> 2) * ty + tx;
-    }
-}
-
-static void blur()
-{
-  register Sint32 x, y, i;
-  Uint32 *new = malloc(beatflower.pitch * beatflower.height);
-
-  i = 0;
-
-  for(y = 1; y < beatflower.height - 1; y++)
-    for(x = 1; x < beatflower.width - 1; x++)
-    {
-      if((y == (beatflower.height >> 1) || y == (beatflower.height >> 1) + 1) &&
-          (x == (beatflower.width >> 1) || x == (beatflower.width >> 1) + 1))
-      {
-        new[y * (beatflower.pitch >> 2) + x] = 0;
-      }
-
-      else
-        new[y * (beatflower.pitch >> 2) + x] = average(*beatflower.transform_table[i + 3],
-                                            *beatflower.transform_table[i + 2],
-                                            *beatflower.transform_table[i + 1],
-                                            *beatflower.transform_table[i]);
-
-      i += 4;
-    }
-
-  memcpy(beatflower.pixels, new, beatflower.pitch * beatflower.height);
-  free(new);
-}
-
-static void black()
-{
-  memset(beatflower.pixels, 0, beatflower.pitch * beatflower.height);
-}
-
-
-static void circle_scope(short data[512])
-{
-  register Sint32 thisx, thisy;
-  register Sint32 nextx, nexty;
-  Sint32 firstx, firsty;
-  Sint32 i, idx, inc = 512 / beatflower.samples;
-
-
-  firstx = thisx = ((beatflower.sine_table[0] * (beatflower_scope_offset(data[0]) + 32768)) >> 16) + (beatflower.width >> 1);
-  firsty = thisy = ((beatflower.cosine_table[0] * (beatflower_scope_offset(data[0]) + 32768)) >> 16) + (beatflower.height >> 1);
-
-  for(i = 1, idx = 0; i < beatflower.samples; i++, idx += inc)
-  {
-    nextx = ((beatflower.sine_table[i] * (beatflower_scope_offset(data[idx]) + 32768)) >> 16) + (beatflower.width >> 1);
-    nexty = ((beatflower.cosine_table[i] * (beatflower_scope_offset(data[idx]) + 32768)) >> 16) + (beatflower.height >> 1);
-
-    line(thisx, thisy, nextx, nexty);
-
-    thisx = nextx;
-    thisy = nexty;
-  }
-
-  line(thisx, thisy, firstx, firsty);
-}
-
-static void line_scope(short data[512])
-{
-  register Sint32 x, y;
-  register Sint32 i, idx, inc = 512 / beatflower.samples;
-
-  for(i = 0, idx = 0; i < beatflower.samples; i++, idx += inc)
-  {
-    x = ((beatflower.sine_table[i] * (beatflower_scope_offset(data[idx]) + 32768)) >> 16) + (beatflower.width >> 1);
-    y = ((beatflower.cosine_table[i] * (beatflower_scope_offset(data[idx]) + 32768)) >> 16) + (beatflower.height >> 1);
-
-    line(beatflower.width >> 1, beatflower.height >> 1, x, y);
-  }
-}
-
-static void dot_scope(short data[512])
-{
-  register Sint32 x, y;
-  register Sint32 i, idx, inc = 512 / beatflower.samples;
-
-  for(i = 0, idx = 0; i < beatflower.samples; i++, idx += inc)
-  {
-    x = ((beatflower.sine_table[i] * (beatflower_scope_offset(data[i]) + 32768)) >> 16) + (beatflower.width >> 1);
-    y = ((beatflower.cosine_table[i] * (beatflower_scope_offset(data[i]) + 32768)) >> 16) + (beatflower.height >> 1);
-
-    beatflower.pixels[y * (beatflower.pitch >> 2) + x] = beatflower.color;
-  }
-}
-
-static void ball_scope(short data[512])
-{
-  register Sint32 x, y;
-  register Sint32 i, idx, inc = 512 / beatflower.samples;
-
-  for(i = 0, idx = 0; i < beatflower.samples; i++, idx += inc)
-  {
-    x = ((beatflower.sine_table[i] * (beatflower_scope_offset(data[idx]) + 32768)) >> 16) + (beatflower.width >> 1);
-    y = ((beatflower.cosine_table[i] * (beatflower_scope_offset(data[idx]) + 32768)) >> 16) + (beatflower.height >> 1);
-
-    beatflower.pixels[y * (beatflower.pitch >> 2) + x + 1] = beatflower.color;
-    beatflower.pixels[y * (beatflower.pitch >> 2) + x - 1] = beatflower.color;
-    beatflower.pixels[(y + 1) * (beatflower.pitch >> 2) + x] = beatflower.color;
-    beatflower.pixels[(y - 1) * (beatflower.pitch >> 2) + x] = beatflower.color;
-  }
-}
-
-static bool check_finished()
-{
-  bool ret;
-
-  pthread_mutex_lock(&beatflower_status_mutex);
-
-  ret = beatflower_finished;
-
-  if(beatflower_reset)
-  {
-    beatflower_reset = SDL_FALSE;
-    beatflower_sdl_renderer_init();
-  }
-
-  pthread_mutex_unlock(&beatflower_status_mutex);
-
-  return ret;
-}
-
-static bool check_playing()
-{
-  bool ret;
-
-  pthread_mutex_lock(&beatflower_status_mutex);
-  ret = beatflower_playing;
-  pthread_mutex_unlock(&beatflower_status_mutex);
-
-  return ret;
-}
-
-
-void *beatflower_sdl_renderer_thread(void *blah)
+void *beatflower_renderer_sdl_thread(void *blah)
 {
   fprintf(stderr,"%s()\n", __PRETTY_FUNCTION__);
   fflush(stderr);
 
-  beatflower_sdl_renderer_init();
+  beatflower_renderer_sdl_init();
 
-  while(!check_playing())
+  while(!beatflower_check_playing())
   {
-    if(check_finished())
+    if(beatflower_check_finished())
     {
       return NULL;
     }
@@ -606,14 +578,14 @@ void *beatflower_sdl_renderer_thread(void *blah)
     SDL_Delay(10);
   }
 
-  while(!check_finished())
+  while(!beatflower_check_finished())
   {
     pthread_mutex_lock(&beatflower_data_mutex);
     find_color(beatflower_freq_data);
     beatflower.scope(beatflower_pcm_data[0]);
     pthread_mutex_unlock(&beatflower_data_mutex);
 
-    if(check_playing())
+    if(beatflower_check_playing())
     {
       static Uint32 ticks;
       Uint32 newticks;

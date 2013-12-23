@@ -99,8 +99,8 @@ void beatflower_xmms_init()
 
   beatflower_log = &beatflower_xmms_log;
 
-//  beatflower_thread = SDL_CreateThread((void *)beatflower_sdl_renderer_thread, NULL);
-  pthread_create(&beatflower_thread, NULL, (void *)beatflower_sdl_renderer_thread, NULL);
+//  beatflower_thread = SDL_CreateThread((void *)beatflower_renderer_sdl_thread, NULL);
+  pthread_create(&beatflower_thread, NULL, (void *)beatflower_renderer_sdl_thread, NULL);
 }
 
 void beatflower_xmms_cleanup()

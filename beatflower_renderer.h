@@ -21,12 +21,14 @@
 
    $Id: beatflower.c,v 1.4 2004/05/18 23:42:16 smoli Exp $ */
 
-#ifndef BEATFLOWER_SDL_RENDERER_H__
-#define BEATFLOWER_SDL_RENDERER_H__ 1
+#ifndef BEATFLOWER_RENDERER_H__
+#define BEATFLOWER_RENDERER_H__ 1
 
-/* beatflower_sdl_renderer.c */
-void beatflower_sdl_renderer_init(void);
-void *beatflower_sdl_renderer_thread(void *blah);
+typedef struct 
+{
+  void (*init)(void);
+  void *(*thread)(void *);
+} beatflower_renderer_t;
 
-#endif // BEATFLOWER_SDL_RENDERER_H__ 1
+#endif // BEATFLOWER_RENDERER_H__ 1
 

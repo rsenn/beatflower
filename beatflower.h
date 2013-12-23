@@ -91,7 +91,7 @@ void config_set_defaults(config_t *beatflower_config);
 //void beatflower_xmms_config_save(config_t *cfg);
 void find_color(short data[2][256]);
 
-void *beatflower_sdl_renderer_thread(void *blah);
+void *beatflower_renderer_sdl_thread(void *blah);
 
 bool beatflower_check_finished(void);
 bool beatflower_check_playing(void);

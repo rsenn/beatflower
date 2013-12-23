@@ -30,7 +30,7 @@
 #include <gtk/gtk.h>
 
 #include "beatflower.h"
-#include "beatflower_sdl_renderer.h"
+#include "beatflower_renderer_sdl.h"
 
 /************************************* Constants ******************************************/
 
@@ -173,7 +173,7 @@ bool beatflower_check_finished()
   if(beatflower_reset)
   {
     beatflower_reset = FALSE;
-    beatflower_sdl_renderer_init();
+    beatflower_renderer_sdl_init();
   }
 
   pthread_mutex_unlock(&beatflower_status_mutex);
