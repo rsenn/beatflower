@@ -30,13 +30,30 @@
 #include "beatflower.h"
 #include "beatflower_renderer.h"
 
+/*************************** Global function prototypes ************************************/
 void beatflower_renderer_sdl_init();
 void *beatflower_renderer_sdl_thread(void *blah);
 
+/****************************** Renderer callbacks *****************************************/
 const beatflower_renderer_t beatflower_renderer_sdl = {
   .init = &beatflower_renderer_sdl_init,
   .thread = &beatflower_renderer_sdl_thread,
 };
+
+/*************************** Local function prototypes *************************************/
+static void create_color_table(void);
+static void line(Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2);
+static void create_sine_tables(void);
+static Uint32 average(Uint32 c1, Uint32 c2, Uint32 c3, Uint32 c4);
+static void zoom(register Sint32 *x, register Sint32 *y);
+static void rotate(register Sint32 *x, register Sint32 *y);
+static void init_transform(void);
+static void blur(void);
+static void black(void);
+static void circle_scope(short data[512]);
+static void line_scope(short data[512]);
+static void dot_scope(short data[512]);
+static void ball_scope(short data[512]);
 
 /************************************* Constants ******************************************/
 
@@ -53,21 +70,169 @@ const beatflower_renderer_t beatflower_renderer_sdl = {
 /************************************* Variables ****************************************/
 static SDL_Surface *screen;
 
+/****************************************************************************************
+ * initialize the beatflower engine 
+ ****************************************************************************************/
+void
+beatflower_renderer_sdl_init(void)
+{
+  fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
+  fflush(stderr);
+
+  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE) < 0)
+  {
+    beatflower_log("SDL_Init() failed!");
+    SDL_Quit();
+  }
+
+  else
+  {
+    beatflower_log("SDL_Init() ok.");
+  }
+
+  pthread_mutex_init(&beatflower_status_mutex, NULL);
+  pthread_mutex_init(&beatflower_data_mutex, NULL);
+  pthread_mutex_init(&beatflower_config_mutex, NULL);
+
+  pthread_mutex_lock(&beatflower_config_mutex);
+  
+ // beatflower_xmms_config_load(&beatflower_config);
+
+  beatflower_log("Initializing beatflower video mode %ux%u ...", beatflower_config.width, beatflower_config.height);
+
+#if SDL_MAJOR_VERSION < 2
+  //screen = SDL_SetVideoMode(beatflower_config.width, beatflower_config.height, 32, SDL_SWSURFACE);
+  screen = SDL_SetVideoMode(beatflower_config.width, beatflower_config.height, 32, SDL_HWSURFACE);
+
+  beatflower_log("SDL_SetVideoMode = %p (%s)", screen, SDL_GetError());
+
+  //SDL_FillRect(screen, NULL, 0xffffffff);
+  SDL_Flip(screen);
+
+  SDL_WM_SetCaption("beatflower v"VERSION, NULL);
+#else
+
+  // Initialise libSDL.
+  if(SDL_Init(SDL_INIT_VIDEO) < 0)
+  {
+    beatflower_log("Could not initialize SDL: %s.\n", SDL_GetError());
+    return;
+  }
+
+  // Create SDL graphics objects.
+  SDL_Window * window = SDL_CreateWindow(
+                          PACKAGE" v"VERSION,
+                          SDL_WINDOWPOS_UNDEFINED,
+                          SDL_WINDOWPOS_UNDEFINED,
+                          beatflower_config.width, beatflower_config.height,
+                          SDL_WINDOW_SHOWN/*|SDL_WINDOW_RESIZABLE*/);
+
+  if(!window)
+  {
+    g_error("Couldn't create window: %s\n", SDL_GetError());
+    return;
+    //quit(3);
+  }
+
+
+  screen = SDL_GetWindowSurface(window);
+#endif
+  beatflower_log("screen = %08xl", (unsigned long) screen);
+
+  beatflower.pixels = screen->pixels;
+  beatflower.pitch  = screen->pitch;
+  beatflower.width  = screen->w;
+  beatflower.height = screen->h;
+  beatflower.radius = (beatflower.width > beatflower.height ? beatflower.height >> 1 : beatflower.width >> 1);
+
+  beatflower.samples = (beatflower_config.samples_mode == SAMPLES_32  ? 32  :
+             (beatflower_config.samples_mode == SAMPLES_64  ? 64  :
+              (beatflower_config.samples_mode == SAMPLES_128 ? 128 :
+               (beatflower_config.samples_mode == SAMPLES_256 ? 256 : 512))));
+
+  beatflower.scope = (beatflower_config.draw_mode == DRAW_DOTS   ? &dot_scope    :
+           (beatflower_config.draw_mode == DRAW_BALLS  ? &ball_scope   :
+            (beatflower_config.draw_mode == DRAW_CIRCLE ? &circle_scope : &line_scope)));
+
+  beatflower.factor = beatflower_config.factor;
+  beatflower.angle = beatflower_config.angle * M_2PI / 360;
+  beatflower.blur_enable = beatflower_config.blur;
+  beatflower.color_mode = beatflower_config.color_mode;
+  beatflower.amp_mode = beatflower_config.amplification_mode;
+  beatflower.offset_mode = (beatflower_config.offset_mode == OFFSET_MINUS ? -32768 :
+                 (beatflower_config.offset_mode == OFFSET_PLUS  ?  32768 : 0));
+  beatflower.color1 = beatflower_config.color1;
+  beatflower.color2 = beatflower_config.color2;
+  beatflower.color3 = beatflower_config.color3;
+  beatflower.decay = beatflower_config.decay;
+
+  create_sine_tables();
+  init_transform();
+  create_color_table();
+
+  pthread_mutex_unlock(&beatflower_config_mutex);
+}
+
+/****************************************************************************************
+ * Rendering thread
+ ****************************************************************************************/
+void *
+beatflower_renderer_sdl_thread(void *blah)
+{
+  //fprintf(stderr,"%s()\n", __PRETTY_FUNCTION__); fflush(stderr);
+
+  beatflower_renderer_sdl_init();
+
+  while(!beatflower_check_playing())
+  {
+    if(beatflower_check_finished())
+    {
+      return NULL;
+    }
+
+    SDL_Delay(10);
+  }
+
+  while(!beatflower_check_finished())
+  {
+    pthread_mutex_lock(&beatflower_data_mutex);
+    find_color(beatflower_freq_data);
+    beatflower.scope(beatflower_pcm_data[0]);
+    pthread_mutex_unlock(&beatflower_data_mutex);
+
+    if(beatflower_check_playing())
+    {
+      static Uint32 ticks;
+      Uint32 newticks;
+      SDL_Flip(screen);
+      newticks = SDL_GetTicks();
+
+      //if(ticks) fprintf(stderr, "fps: %u\n", 1000 / (newticks - ticks));
+
+      ticks = newticks;
+    }
+
+    if(beatflower.blur_enable)
+    {
+      blur();
+    }
+
+    if(!beatflower.blur_enable)
+    {
+      black();
+    }
+  }
+
+  pthread_mutex_destroy(&beatflower_status_mutex);
+  pthread_mutex_destroy(&beatflower_data_mutex);
+  pthread_mutex_destroy(&beatflower_config_mutex);
+
+  SDL_Quit();
+
+  return NULL;
+}
+
 /********************************* Functions *****************************************/
-
-void         config_set_defaults(config_t *beatflower_config);
-
-static void         dot_scope(short data[512]);
-static void         ball_scope(short data[512]);
-static void         circle_scope(short data[512]);
-static void         line_scope(short data[512]);
-static void         create_color_table();
-static void         line(Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2);
-static void         zoom(Sint32 *x, Sint32 *y);
-static void         rotate(Sint32 *x, Sint32 *y);
-static void         init_transform();
-
-
 static void
 create_color_table(void)
 {
@@ -466,165 +631,5 @@ ball_scope(short data[512])
     beatflower.pixels[(y + 1) * (beatflower.pitch >> 2) + x] = beatflower.color;
     beatflower.pixels[(y - 1) * (beatflower.pitch >> 2) + x] = beatflower.color;
   }
-}
-
-/* initialize the beatflower engine */
-void
-
-beatflower_renderer_sdl_init(void)
-{
-  fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
-  fflush(stderr);
-
-  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE) < 0)
-  {
-    beatflower_log("SDL_Init() failed!");
-    SDL_Quit();
-  }
-
-  else
-  {
-    beatflower_log("SDL_Init() ok.");
-  }
-
-  pthread_mutex_init(&beatflower_status_mutex, NULL);
-  pthread_mutex_init(&beatflower_data_mutex, NULL);
-  pthread_mutex_init(&beatflower_config_mutex, NULL);
-
-  pthread_mutex_lock(&beatflower_config_mutex);
-  
- // beatflower_xmms_config_load(&beatflower_config);
-
-  beatflower_log("Initializing beatflower video mode %ux%u ...", beatflower_config.width, beatflower_config.height);
-
-#if SDL_MAJOR_VERSION < 2
-  //screen = SDL_SetVideoMode(beatflower_config.width, beatflower_config.height, 32, SDL_SWSURFACE);
-  screen = SDL_SetVideoMode(beatflower_config.width, beatflower_config.height, 32, SDL_HWSURFACE);
-
-  beatflower_log("SDL_SetVideoMode = %p (%s)", screen, SDL_GetError());
-
-  //SDL_FillRect(screen, NULL, 0xffffffff);
-  SDL_Flip(screen);
-
-  SDL_WM_SetCaption("beatflower v"VERSION, NULL);
-#else
-
-  // Initialise libSDL.
-  if(SDL_Init(SDL_INIT_VIDEO) < 0)
-  {
-    beatflower_log("Could not initialize SDL: %s.\n", SDL_GetError());
-    return;
-  }
-
-  // Create SDL graphics objects.
-  SDL_Window * window = SDL_CreateWindow(
-                          PACKAGE" v"VERSION,
-                          SDL_WINDOWPOS_UNDEFINED,
-                          SDL_WINDOWPOS_UNDEFINED,
-                          beatflower_config.width, beatflower_config.height,
-                          SDL_WINDOW_SHOWN/*|SDL_WINDOW_RESIZABLE*/);
-
-  if(!window)
-  {
-    g_error("Couldn't create window: %s\n", SDL_GetError());
-    return;
-    //quit(3);
-  }
-
-
-  screen = SDL_GetWindowSurface(window);
-#endif
-  beatflower_log("screen = %08xl", (unsigned long) screen);
-
-  beatflower.pixels = screen->pixels;
-  beatflower.pitch  = screen->pitch;
-  beatflower.width  = screen->w;
-  beatflower.height = screen->h;
-  beatflower.radius = (beatflower.width > beatflower.height ? beatflower.height >> 1 : beatflower.width >> 1);
-
-  beatflower.samples = (beatflower_config.samples_mode == SAMPLES_32  ? 32  :
-             (beatflower_config.samples_mode == SAMPLES_64  ? 64  :
-              (beatflower_config.samples_mode == SAMPLES_128 ? 128 :
-               (beatflower_config.samples_mode == SAMPLES_256 ? 256 : 512))));
-
-  beatflower.scope = (beatflower_config.draw_mode == DRAW_DOTS   ? &dot_scope    :
-           (beatflower_config.draw_mode == DRAW_BALLS  ? &ball_scope   :
-            (beatflower_config.draw_mode == DRAW_CIRCLE ? &circle_scope : &line_scope)));
-
-  beatflower.factor = beatflower_config.factor;
-  beatflower.angle = beatflower_config.angle * M_2PI / 360;
-  beatflower.blur_enable = beatflower_config.blur;
-  beatflower.color_mode = beatflower_config.color_mode;
-  beatflower.amp_mode = beatflower_config.amplification_mode;
-  beatflower.offset_mode = (beatflower_config.offset_mode == OFFSET_MINUS ? -32768 :
-                 (beatflower_config.offset_mode == OFFSET_PLUS  ?  32768 : 0));
-  beatflower.color1 = beatflower_config.color1;
-  beatflower.color2 = beatflower_config.color2;
-  beatflower.color3 = beatflower_config.color3;
-  beatflower.decay = beatflower_config.decay;
-
-  create_sine_tables();
-  init_transform();
-  create_color_table();
-
-  pthread_mutex_unlock(&beatflower_config_mutex);
-}
-
-
-void 
-*beatflower_renderer_sdl_thread(void *blah)
-{
-  fprintf(stderr,"%s()\n", __PRETTY_FUNCTION__);
-  fflush(stderr);
-
-  beatflower_renderer_sdl_init();
-
-  while(!beatflower_check_playing())
-  {
-    if(beatflower_check_finished())
-    {
-      return NULL;
-    }
-
-    SDL_Delay(10);
-  }
-
-  while(!beatflower_check_finished())
-  {
-    pthread_mutex_lock(&beatflower_data_mutex);
-    find_color(beatflower_freq_data);
-    beatflower.scope(beatflower_pcm_data[0]);
-    pthread_mutex_unlock(&beatflower_data_mutex);
-
-    if(beatflower_check_playing())
-    {
-      static Uint32 ticks;
-      Uint32 newticks;
-      SDL_Flip(screen);
-      newticks = SDL_GetTicks();
-
-      //if(ticks) fprintf(stderr, "fps: %u\n", 1000 / (newticks - ticks));
-
-      ticks = newticks;
-    }
-
-    if(beatflower.blur_enable)
-    {
-      blur();
-    }
-
-    if(!beatflower.blur_enable)
-    {
-      black();
-    }
-  }
-
-  pthread_mutex_destroy(&beatflower_status_mutex);
-  pthread_mutex_destroy(&beatflower_data_mutex);
-  pthread_mutex_destroy(&beatflower_config_mutex);
-
-  SDL_Quit();
-
-  return NULL;
 }
 

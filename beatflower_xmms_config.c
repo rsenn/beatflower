@@ -38,7 +38,7 @@ beatflower_xmms_config_load(config_t *cfg)
   if(!(f = xmms_cfg_open_file(filename)))   // && !(f = xmms_cfg_new()))
   {
     g_warning("Could not open XMMS beatflower config '%s', settings defaults...", filename);
-    config_set_defaults(cfg);
+    beatflower_config_default(cfg);
     // beatflower_xmms_config_save(cfg);
   }
 

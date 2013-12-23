@@ -66,11 +66,11 @@ beatflower_state_t beatflower;
 
 /********************************* Functions *****************************************/
 
-void         config_set_defaults(config_t *beatflower_config);
+void         beatflower_config_default(config_t *beatflower_config);
 
 
 void 
-config_set_defaults(config_t *cfg)
+beatflower_config_default(config_t *cfg)
 {
   g_message("%s:", __PRETTY_FUNCTION__);
 

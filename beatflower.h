@@ -86,7 +86,7 @@ extern bool beatflower_reset;
 extern int16_t beatflower_pcm_data[2][512];
 extern int16_t beatflower_freq_data[2][256];
 
-void config_set_defaults(config_t *beatflower_config);
+void beatflower_config_default(config_t *beatflower_config);
 //void beatflower_xmms_config_load(config_t *cfg);
 //void beatflower_xmms_config_save(config_t *cfg);
 void find_color(short data[2][256]);
