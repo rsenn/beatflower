@@ -28,7 +28,7 @@ typedef struct config_s {
   enum { SAMPLES_32       = 0, SAMPLES_64       = 1, SAMPLES_128  = 2, SAMPLES_256 = 3, SAMPLES_512 = 4 } samples_mode;
   enum { AMP_HALF         = 0, AMP_FULL         = 1, AMP_DOUBLE   = 2 }                                   amplification_mode;
   enum { OFFSET_MINUS     = 0, OFFSET_NULL      = 1, OFFSET_PLUS  = 2 }                                   offset_mode;
-} config_t;
+} beatflower_config_t;
 
 
 extern bool         beatflower_config_loaded;
@@ -75,9 +75,7 @@ typedef void beatflower_log_function(const char *s, ...);
 
 extern beatflower_log_function *beatflower_log;
 
-extern config_t beatflower_config;
-//extern config_t beatflower_newconfig;
-
+extern beatflower_config_t beatflower_config;
 extern bool beatflower_config_loaded;
 extern bool beatflower_finished;
 extern bool beatflower_playing;
@@ -86,10 +84,10 @@ extern bool beatflower_reset;
 extern int16_t beatflower_pcm_data[2][512];
 extern int16_t beatflower_freq_data[2][256];
 
-void beatflower_config_default(config_t *beatflower_config);
-//void beatflower_xmms_config_load(config_t *cfg);
-//void beatflower_xmms_config_save(config_t *cfg);
-void find_color(short data[2][256]);
+void beatflower_config_default(beatflower_config_t *beatflower_config);
+//void beatflower_xmms_config_load(beatflower_config_t *cfg);
+//void beatflower_xmms_config_save(beatflower_config_t *cfg);
+void beatflower_find_color(short data[2][256]);
 
 void *beatflower_renderer_sdl_thread(void *blah);
 

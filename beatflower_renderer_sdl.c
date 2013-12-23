@@ -196,7 +196,7 @@ beatflower_renderer_sdl_thread(void *blah)
   while(!beatflower_check_finished())
   {
     pthread_mutex_lock(&beatflower_data_mutex);
-    find_color(beatflower_freq_data);
+    beatflower_find_color(beatflower_freq_data);
     beatflower.scope(beatflower_pcm_data[0]);
     pthread_mutex_unlock(&beatflower_data_mutex);
 

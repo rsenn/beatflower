@@ -27,7 +27,7 @@
 #include "beatflower_xmms.h"
 
 GtkWidget *beatflower_xmms_settings_win = NULL;
-static config_t     beatflower_newconfig;
+static beatflower_config_t     beatflower_newconfig;
 
 
 static void on_fullscreen_checkbutton_clicked(GtkCheckButton *checkbutton);

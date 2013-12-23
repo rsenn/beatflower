@@ -32,45 +32,29 @@
 #include "beatflower.h"
 #include "beatflower_renderer.h"
 
-/************************************* Constants ******************************************/
-
-#define M_2PI 6.2831853071795864769252867665590058
-
-/* uh.. endian shit */
-#define RED_MASK   0xff0000
-#define GREEN_MASK 0x00ff00
-#define BLUE_MASK  0x0000ff
-#define RED_SHIFT   16
-#define GREEN_SHIFT  8
-#define BLUE_SHIFT   0
-
 /************************************* Variables ****************************************/
 
-config_t     beatflower_config;
+beatflower_config_t      beatflower_config;
 beatflower_log_function *beatflower_log;
-pthread_t beatflower_thread;
-
-//config_t     beatflower_newconfig;
-pthread_mutex_t beatflower_status_mutex  = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t beatflower_data_mutex    = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t beatflower_config_mutex  = PTHREAD_MUTEX_INITIALIZER;
-bool         beatflower_config_loaded = FALSE;
-/*static bool         reinit        = FALSE;*/
-bool         beatflower_playing;
-bool         beatflower_finished;            /* some status variables... */
-bool         beatflower_reset;
-int16_t       beatflower_pcm_data[2][512];    /* 2 channel pcm and freq data */
-int16_t       beatflower_freq_data[2][256];
-
-beatflower_state_t beatflower;
+pthread_t                beatflower_thread;
+pthread_mutex_t          beatflower_status_mutex  = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t          beatflower_data_mutex    = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t          beatflower_config_mutex  = PTHREAD_MUTEX_INITIALIZER;
+bool                     beatflower_config_loaded = FALSE;
+bool                     beatflower_playing;
+bool                     beatflower_finished;            /* some status variables... */
+bool                     beatflower_reset;
+int16_t                  beatflower_pcm_data[2][512];    /* 2 channel pcm and freq data */
+int16_t                  beatflower_freq_data[2][256];
+beatflower_state_t       beatflower;
 
 /********************************* Functions *****************************************/
 
-void         beatflower_config_default(config_t *beatflower_config);
+void         beatflower_config_default(beatflower_config_t *beatflower_config);
 
 
 void 
-beatflower_config_default(config_t *cfg)
+beatflower_config_default(beatflower_config_t *cfg)
 {
   g_message("%s:", __PRETTY_FUNCTION__);
 
@@ -133,7 +117,7 @@ beatflower_scope_offset(int value)
 }
 
 void 
-find_color(int16_t data[2][256])
+beatflower_find_color(int16_t data[2][256])
 {
   uint32_t value = 0;
   int32_t x;
