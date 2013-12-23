@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 
 #include "beatflower.h"
+#include "beatflower_xmms.h"
 
 GtkWidget *beatflower_xmms_settings_win = NULL;
 static config_t     beatflower_newconfig;
@@ -124,7 +125,7 @@ void beatflower_xmms_settings()
     return;
   }
 
-  SDL_LockMutex(beatflower_config_mutex);
+  pthread_mutex_lock(&beatflower_config_mutex);
 
   if(!beatflower_config_loaded)
   {
@@ -133,7 +134,7 @@ void beatflower_xmms_settings()
 
   beatflower_newconfig = beatflower_config;
 
-  SDL_UnlockMutex(beatflower_config_mutex);
+  pthread_mutex_unlock(&beatflower_config_mutex);
 
   beatflower_xmms_settings_win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_object_set_data(GTK_OBJECT(beatflower_xmms_settings_win), "beatflower_xmms_settings_win", beatflower_xmms_settings_win);
@@ -810,7 +811,7 @@ void on_fullscreen_checkbutton_clicked(GtkCheckButton *checkbutton)
 {
   gboolean fullscreen = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
 
-  g_message("%s: fullscreen = %s", __PRETTY_FUNCTION__, fullscreen);
+  g_message("%s: fullscreen = %s", __PRETTY_FUNCTION__, fullscreen?"TRUE":"FALSE");
   beatflower_newconfig.fullscreen = fullscreen ;
 }
 
@@ -927,7 +928,7 @@ void on_offset_option_changed(GtkMenuItem *item, GtkMenu *menu)
 
   active = gtk_menu_get_active(GTK_MENU(menu));
   index = g_list_index(gtk_container_children(GTK_CONTAINER(menu)), active);
-  g_message("%s: offset_mode = %i", __PRETTY_FUNCTION__, index);
+  g_message("%s: beatflower.offset_mode = %i", __PRETTY_FUNCTION__, index);
   beatflower_newconfig.offset_mode = index;
 }
 
@@ -942,20 +943,20 @@ void on_apply_button_clicked(GtkButton *button)
 {
   beatflower_xmms_config_save(&beatflower_newconfig);
 
-  //SDL_LockMutex(beatflower_config_mutex);
+  //pthread_mutex_lock(&beatflower_config_mutex);
   beatflower_config = beatflower_newconfig;
-  //SDL_UnlockMutex(beatflower_config_mutex);
+  //pthread_mutex_unlock(&beatflower_config_mutex);
 
   //beatflower_xmms_config_save(&beatflower_config);
 
-  SDL_LockMutex(beatflower_status_mutex);
+  pthread_mutex_lock(&beatflower_status_mutex);
 
   if(beatflower_playing)
   {
     beatflower_reset = TRUE;
   }
 
-  SDL_UnlockMutex(beatflower_status_mutex);
+  pthread_mutex_unlock(&beatflower_status_mutex);
 }
 
 void on_cancel_button_clicked(GtkButton *button)

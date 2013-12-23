@@ -2,8 +2,9 @@ prefix = /usr
 
 CC = gcc
 INSTALL = install
+STRIP = strip
 
-DEBUG = 1
+DEBUG = 0
 
 ifeq ($(DEBUG),1)
 CFLAGS := -g -ggdb -O0
@@ -32,23 +33,28 @@ XMMS_LIBS = $(shell xmms-config --libs)
 
 XMMS_PLUGIN = libbeatflower.so
 
-SOURCES = beatflower.c beatflower_xmms_plugin.c beatflower_xmms_settings.c beatflower_xmms_config.c
+SOURCES = beatflower.c beatflower_xmms_plugin.c beatflower_xmms_settings.c beatflower_xmms_config.c beatflower_sdl_renderer.c
 OBJECTS = $(SOURCES:%.c=%.o)
 HEADERS = beatflower.h
 TARGETS = $(XMMS_PLUGIN)
 
-$(TARGETS): CPPFLAGS += $(DEFS)
+#$(TARGETS): CPPFLAGS += $(DEFS)
 $(TARGETS): CFLAGS += -fPIC 
 
 all: $(TARGETS) 
 
-beatflower.o: CFLAGS += $(SDL_CFLAGS)
-$(OBJECTS): CFLAGS += $(XMMS_CFLAGS) 
+.c.o:
+	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $<
+
+beatflower_sdl_renderer.o: CFLAGS += $(SDL_CFLAGS)
+beatflower.o beatflower_xmms_settings.o beatflower_xmms_config.o beatflower_xmms_plugin.o: CFLAGS += $(XMMS_CFLAGS) 
 
 $(XMMS_PLUGIN): LIBS += $(XMMS_LIBS) $(SDL_LIBS)
 $(XMMS_PLUGIN): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $^ $(LIBS)
-
+ifneq ($(DEBUG),1)
+	$(STRIP) --strip-unneeded $@
+endif
 clean:
 	$(RM) $(OBJECTS)
 
