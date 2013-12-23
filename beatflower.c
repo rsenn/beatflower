@@ -34,19 +34,20 @@
 
 /************************************* Variables ****************************************/
 
-beatflower_config_t      beatflower_config;
-beatflower_log_function *beatflower_log;
-pthread_t                beatflower_thread;
-pthread_mutex_t          beatflower_status_mutex  = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t          beatflower_data_mutex    = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t          beatflower_config_mutex  = PTHREAD_MUTEX_INITIALIZER;
-bool                     beatflower_config_loaded = FALSE;
-bool                     beatflower_playing;
-bool                     beatflower_finished;            /* some status variables... */
-bool                     beatflower_reset;
-int16_t                  beatflower_pcm_data[2][512];    /* 2 channel pcm and freq data */
-int16_t                  beatflower_freq_data[2][256];
-beatflower_state_t       beatflower;
+beatflower_config_t          beatflower_config;
+beatflower_log_function     *beatflower_log;
+pthread_t                    beatflower_thread;
+pthread_mutex_t              beatflower_status_mutex  = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t              beatflower_data_mutex    = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t              beatflower_config_mutex  = PTHREAD_MUTEX_INITIALIZER;
+bool                         beatflower_config_loaded = FALSE;
+bool                         beatflower_playing;
+bool                         beatflower_finished;            /* some status variables... */
+bool                         beatflower_reset;
+int16_t                      beatflower_pcm_data[2][512];    /* 2 channel pcm and freq data */
+int16_t                      beatflower_freq_data[2][256];
+beatflower_state_t           beatflower;
+const beatflower_renderer_t *beatflower_renderer = &beatflower_renderer_sdl;
 
 /********************************* Functions *****************************************/
 
@@ -56,7 +57,7 @@ void         beatflower_config_default(beatflower_config_t *beatflower_config);
 void 
 beatflower_config_default(beatflower_config_t *cfg)
 {
-  g_message("%s:", __PRETTY_FUNCTION__);
+//  g_message("%s:", __PRETTY_FUNCTION__);
 
   cfg->width  = 320;
   cfg->height = 320;
@@ -77,6 +78,15 @@ beatflower_config_default(beatflower_config_t *cfg)
   cfg->rotatebeat = FALSE;
 }
 
+void
+beatflower_start(void)
+{
+  beatflower_finished = FALSE;
+  beatflower_playing = FALSE;
+  beatflower_reset = FALSE;
+
+  pthread_create(&beatflower_thread, NULL, (void *)beatflower_renderer->thread, NULL);
+}
 
 int 
 beatflower_scope_amplification(int value)

@@ -31,7 +31,7 @@ beatflower_xmms_config_load(beatflower_config_t *cfg)
   ConfigFile *f;
   gchar *filename;
 
-  g_message("%s:", __PRETTY_FUNCTION__);
+//  g_message("%s:", __PRETTY_FUNCTION__);
 
   filename = g_strconcat(g_get_home_dir(), "/.xmms/config", NULL);
 
@@ -76,7 +76,7 @@ beatflower_xmms_config_save(beatflower_config_t *cfg)
   ConfigFile *f;
 
   gchar *filename;
-  g_message("%s:", __PRETTY_FUNCTION__);
+//  g_message("%s:", __PRETTY_FUNCTION__);
 
   filename = g_strconcat(g_get_home_dir(), "/.xmms/config", NULL);
 
@@ -110,9 +110,9 @@ beatflower_xmms_config_save(beatflower_config_t *cfg)
 
   g_free(filename);
 
-  if(beatflower_xmms_settings_win)
+/*  if(beatflower_xmms_settings_win)
   {
     gtk_widget_destroy(beatflower_xmms_settings_win);
     beatflower_xmms_settings_win = NULL;
-  }
+  }*/
 }

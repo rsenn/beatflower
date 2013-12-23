@@ -58,8 +58,8 @@ static VisPlugin beatflower_plugin =
 };
 
 /* the only non-static thing.... */
-VisPlugin 
-*get_vplugin_info(void)
+VisPlugin *
+get_vplugin_info(void)
 {
   return &beatflower_plugin;
 }
@@ -77,70 +77,45 @@ static void beatflower_xmms_log(const char *format, ...)
 
 /* initialize values and start the beatflower beatflower_thread */
 void
-
 beatflower_xmms_init(void)
 {
-  //pthread_attr_t attr;
-
   g_message("%s:", __PRETTY_FUNCTION__);
-
-  //srand(time(NULL));
 
   pthread_mutex_lock(&beatflower_config_mutex);
 
   if(!beatflower_config_loaded)
-  {
     beatflower_xmms_config_load(&beatflower_config);
-  }
 
   pthread_mutex_unlock(&beatflower_config_mutex);
 
-
-  beatflower_finished = FALSE;
-  beatflower_playing = FALSE;
-  beatflower_reset = FALSE;
-
   beatflower_log = &beatflower_xmms_log;
 
-//  beatflower_thread = SDL_CreateThread((void *)beatflower_renderer_sdl_thread, NULL);
-  pthread_create(&beatflower_thread, NULL, (void *)beatflower_renderer_sdl_thread, NULL);
+  beatflower_start();
 }
 
 void
-
 beatflower_xmms_cleanup(void)
 {
-  g_message("%s:", __PRETTY_FUNCTION__);
-
   pthread_mutex_lock(&beatflower_status_mutex);
   beatflower_finished = TRUE;
   beatflower_playing = FALSE;
   pthread_mutex_unlock(&beatflower_status_mutex);
 
   if(beatflower_thread)
-  {
-    //SDL_WaitThread(beatflower_thread, NULL);
     pthread_join(beatflower_thread, NULL);
-  }
 }
 
 void
-
 beatflower_xmms_playback_start(void)
 {
-  g_message("%s:", __PRETTY_FUNCTION__);
-
   pthread_mutex_lock(&beatflower_status_mutex);
   beatflower_playing = TRUE;
   pthread_mutex_unlock(&beatflower_status_mutex);
 }
 
 void
-
 beatflower_xmms_playback_stop(void)
 {
-  g_message("%s:", __PRETTY_FUNCTION__);
-
   pthread_mutex_lock(&beatflower_status_mutex);
   beatflower_playing = FALSE;
   pthread_mutex_unlock(&beatflower_status_mutex);
@@ -163,11 +138,8 @@ beatflower_xmms_render_freq(short data[2][256])
 }
 
 void
-
 beatflower_xmms_about(void)
 {
-  g_message("%s:", __PRETTY_FUNCTION__);
-
 }
 
 

@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <pthread.h>
 
-/*************************************** Types ********************************************/
+/************************************ Type definitions ****************************************/
 
 typedef int bool;
 
@@ -30,15 +30,6 @@ typedef struct config_s {
   enum { OFFSET_MINUS     = 0, OFFSET_NULL      = 1, OFFSET_PLUS  = 2 }                                   offset_mode;
 } beatflower_config_t;
 
-
-extern bool         beatflower_config_loaded;
-  /*static bool         reinit        = FALSE;*/
-extern bool         beatflower_playing;
-extern bool         beatflower_finished;            /* some status variables... */
-extern bool         beatflower_reset;
-extern int16_t       beatflower_pcm_data[2][512];    /* 2 channel pcm and freq data */
-extern int16_t       beatflower_freq_data[2][256];
-
 typedef struct {
   int32_t color_table[512];
   unsigned int samples;
@@ -63,38 +54,32 @@ typedef struct {
   uint32_t       color3;
   uint32_t       decay;
 } beatflower_state_t;
-/*************************************** Externals ********************************************/
-extern beatflower_state_t beatflower;
-extern pthread_t beatflower_thread;
-
-extern pthread_mutex_t beatflower_config_mutex;
-extern pthread_mutex_t beatflower_data_mutex;
-extern pthread_mutex_t beatflower_status_mutex;
 
 typedef void beatflower_log_function(const char *s, ...);
 
-extern beatflower_log_function *beatflower_log;
-
+/*************************************** Externals ********************************************/
 extern beatflower_config_t beatflower_config;
+extern beatflower_log_function *beatflower_log;
+extern pthread_t beatflower_thread;
+extern pthread_mutex_t beatflower_status_mutex;
+extern pthread_mutex_t beatflower_data_mutex;
+extern pthread_mutex_t beatflower_config_mutex;
 extern bool beatflower_config_loaded;
-extern bool beatflower_finished;
 extern bool beatflower_playing;
+extern bool beatflower_finished;
 extern bool beatflower_reset;
-
 extern int16_t beatflower_pcm_data[2][512];
 extern int16_t beatflower_freq_data[2][256];
+extern beatflower_state_t beatflower;
 
-void beatflower_config_default(beatflower_config_t *beatflower_config);
-//void beatflower_xmms_config_load(beatflower_config_t *cfg);
-//void beatflower_xmms_config_save(beatflower_config_t *cfg);
-void beatflower_find_color(short data[2][256]);
+/********************************** Function prototypes ***************************************/
 
-void *beatflower_renderer_sdl_thread(void *blah);
-
-bool beatflower_check_finished(void);
-bool beatflower_check_playing(void);
-
+void beatflower_config_default(beatflower_config_t *cfg);
+void beatflower_start(void);
 int beatflower_scope_amplification(int value);
 int beatflower_scope_offset(int value);
+void beatflower_find_color(int16_t data[2][256]);
+bool beatflower_check_finished(void);
+bool beatflower_check_playing(void);
 
 #endif // BEATFLOWER_H__ 1
