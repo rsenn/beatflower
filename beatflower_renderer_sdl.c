@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #include "beatflower.h"
 #include "beatflower_renderer.h"
