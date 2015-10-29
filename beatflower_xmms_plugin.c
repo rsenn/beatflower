@@ -81,12 +81,12 @@ beatflower_xmms_init(void)
 {
   g_message("%s:", __PRETTY_FUNCTION__);
 
-  pthread_mutex_lock(&beatflower_config_mutex);
+  SDL_LockMutex(beatflower_config_mutex);
 
   if(!beatflower_config_loaded)
     beatflower_xmms_config_load(&beatflower_config);
 
-  pthread_mutex_unlock(&beatflower_config_mutex);
+  SDL_UnlockMutex(beatflower_config_mutex);
 
   beatflower_log = &beatflower_xmms_log;
 
@@ -99,13 +99,13 @@ beatflower_xmms_cleanup(void)
 {
   g_message("%s:", __PRETTY_FUNCTION__);
 
-  pthread_mutex_lock(&beatflower_status_mutex);
+  SDL_LockMutex(beatflower_status_mutex);
   beatflower_finished = TRUE;
   beatflower_playing = FALSE;
-  pthread_mutex_unlock(&beatflower_status_mutex);
+  SDL_UnlockMutex(beatflower_status_mutex);
 
   if(beatflower_thread)
-    pthread_join(beatflower_thread, NULL);
+    SDL_WaitThread(beatflower_thread, NULL);
 }
 
 void
@@ -113,9 +113,9 @@ beatflower_xmms_playback_start(void)
 {
   g_message("%s:", __PRETTY_FUNCTION__);
 
-  pthread_mutex_lock(&beatflower_status_mutex);
+  SDL_LockMutex(beatflower_status_mutex);
   beatflower_playing = TRUE;
-  pthread_mutex_unlock(&beatflower_status_mutex);
+  SDL_UnlockMutex(beatflower_status_mutex);
 }
 
 void
@@ -123,25 +123,25 @@ beatflower_xmms_playback_stop(void)
 {
   g_message("%s:", __PRETTY_FUNCTION__);
 
-  pthread_mutex_lock(&beatflower_status_mutex);
+  SDL_LockMutex(beatflower_status_mutex);
   beatflower_playing = FALSE;
-  pthread_mutex_unlock(&beatflower_status_mutex);
+  SDL_UnlockMutex(beatflower_status_mutex);
 }
 
 void
 beatflower_xmms_render_pcm(short data[2][512])
 {
-  pthread_mutex_lock(&beatflower_data_mutex);
+  SDL_LockMutex(beatflower_data_mutex);
   memcpy(beatflower_pcm_data, data, 1024);
-  pthread_mutex_unlock(&beatflower_data_mutex);
+  SDL_UnlockMutex(beatflower_data_mutex);
 }
 
 void
 beatflower_xmms_render_freq(short data[2][256])
 {
-  pthread_mutex_lock(&beatflower_data_mutex);
+  SDL_LockMutex(beatflower_data_mutex);
   memcpy(beatflower_freq_data, data, 512);
-  pthread_mutex_unlock(&beatflower_data_mutex);
+  SDL_UnlockMutex(beatflower_data_mutex);
 }
 
 void

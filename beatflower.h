@@ -2,7 +2,7 @@
 #define BEATFLOWER_H__ 1
 
 #include <stdint.h>
-#include <pthread.h>
+#include <SDL/SDL.h>
 
 /************************************ Type definitions ****************************************/
 
@@ -68,10 +68,10 @@ typedef void beatflower_log_function(const char *s, ...);
 /*************************************** Externals ********************************************/
 extern beatflower_config_t beatflower_config;
 extern beatflower_log_function *beatflower_log;
-extern pthread_t beatflower_thread;
-extern pthread_mutex_t beatflower_status_mutex;
-extern pthread_mutex_t beatflower_data_mutex;
-extern pthread_mutex_t beatflower_config_mutex;
+extern SDL_Thread* beatflower_thread;
+extern SDL_mutex* beatflower_status_mutex;
+extern SDL_mutex* beatflower_data_mutex;
+extern SDL_mutex* beatflower_config_mutex;
 extern bool beatflower_config_loaded;
 extern bool beatflower_playing;
 extern bool beatflower_finished;

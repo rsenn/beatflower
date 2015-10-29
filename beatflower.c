@@ -37,10 +37,10 @@
 
 beatflower_config_t          beatflower_config;
 beatflower_log_function     *beatflower_log;
-pthread_t                    beatflower_thread;
-pthread_mutex_t              beatflower_status_mutex  = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t              beatflower_data_mutex    = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t              beatflower_config_mutex  = PTHREAD_MUTEX_INITIALIZER;
+SDL_Thread*                    beatflower_thread;
+SDL_mutex*              beatflower_status_mutex  = PTHREAD_MUTEX_INITIALIZER;
+SDL_mutex*              beatflower_data_mutex    = PTHREAD_MUTEX_INITIALIZER;
+SDL_mutex*              beatflower_config_mutex  = PTHREAD_MUTEX_INITIALIZER;
 bool                         beatflower_config_loaded = FALSE;
 bool                         beatflower_playing;
 bool                         beatflower_finished;            /* some status variables... */
@@ -92,7 +92,7 @@ beatflower_init(void)
 void
 beatflower_start(void)
 {
-  pthread_create(&beatflower_thread, NULL, (void *)beatflower_renderer->thread, NULL);
+  beatflower_thread = SDL_CreateThread((void *)beatflower_renderer->thread, NULL);
 }
 
 int
@@ -175,7 +175,7 @@ beatflower_check_finished(void)
 {
   bool ret;
 
-  pthread_mutex_lock(&beatflower_status_mutex);
+  SDL_LockMutex(beatflower_status_mutex);
 
   ret = beatflower_finished;
 
@@ -185,7 +185,7 @@ beatflower_check_finished(void)
     beatflower_renderer_sdl.init();
   }
 
-  pthread_mutex_unlock(&beatflower_status_mutex);
+  SDL_UnlockMutex(beatflower_status_mutex);
 
   return ret;
 }
@@ -195,9 +195,9 @@ beatflower_check_playing(void)
 {
   bool ret;
 
-  pthread_mutex_lock(&beatflower_status_mutex);
+  SDL_LockMutex(beatflower_status_mutex);
   ret = beatflower_playing;
-  pthread_mutex_unlock(&beatflower_status_mutex);
+  SDL_UnlockMutex(beatflower_status_mutex);
 
   return ret;
 }

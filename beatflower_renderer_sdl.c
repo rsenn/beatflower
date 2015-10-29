@@ -90,11 +90,11 @@ beatflower_renderer_sdl_init(void)
     beatflower_log("SDL_Init() ok.");
   }
 
-  pthread_mutex_init(&beatflower_status_mutex, NULL);
-  pthread_mutex_init(&beatflower_data_mutex, NULL);
-  pthread_mutex_init(&beatflower_config_mutex, NULL);
+  beatflower_status_mutex = SDL_CreateMutex();
+  beatflower_data_mutex = SDL_CreateMutex();
+  beatflower_config_mutex = SDL_CreateMutex();
 
-  pthread_mutex_lock(&beatflower_config_mutex);
+  SDL_LockMutex(beatflower_config_mutex);
 
  // beatflower_xmms_config_load(&beatflower_config);
 
@@ -170,7 +170,7 @@ beatflower_renderer_sdl_init(void)
   init_transform();
   create_color_table();
 
-  pthread_mutex_unlock(&beatflower_config_mutex);
+  SDL_UnlockMutex(beatflower_config_mutex);
 }
 
 /****************************************************************************************
@@ -195,10 +195,10 @@ beatflower_renderer_sdl_thread(void *blah)
 
   while(!beatflower_check_finished())
   {
-    pthread_mutex_lock(&beatflower_data_mutex);
+    SDL_LockMutex(beatflower_data_mutex);
     beatflower_find_color(beatflower_freq_data);
     beatflower.scope(beatflower_pcm_data[0]);
-    pthread_mutex_unlock(&beatflower_data_mutex);
+    SDL_UnlockMutex(beatflower_data_mutex);
 
     if(beatflower_check_playing())
     {
@@ -223,9 +223,9 @@ beatflower_renderer_sdl_thread(void *blah)
     }
   }
 
-  pthread_mutex_destroy(&beatflower_status_mutex);
-  pthread_mutex_destroy(&beatflower_data_mutex);
-  pthread_mutex_destroy(&beatflower_config_mutex);
+  SDL_DestroyMutex(beatflower_status_mutex);
+  SDL_DestroyMutex(beatflower_data_mutex);
+  SDL_DestroyMutex(beatflower_config_mutex);
 
   SDL_Quit();
 

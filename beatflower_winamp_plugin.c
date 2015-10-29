@@ -95,16 +95,16 @@ beatflower_winamp_config(struct winampVisModule *this_mod) {
 static int
 beatflower_winamp_init(struct winampVisModule *this_mod) {
 
-  pthread_mutex_lock(&beatflower_config_mutex);
+  SDL_LockMutex(beatflower_config_mutex);
 
   if(!beatflower_config_loaded)
     beatflower_winamp_config_load(&beatflower_config);
 
-  pthread_mutex_unlock(&beatflower_config_mutex);
+  SDL_UnlockMutex(beatflower_config_mutex);
 
   beatflower_log = &beatflower_winamp_log;
   beatflower_init();
-  beatflower_start();
+//  beatflower_start();
   return 0;
 }
 

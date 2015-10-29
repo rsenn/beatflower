@@ -127,7 +127,7 @@ beatflower_xmms_settings(void)
     return;
   }
 
-  pthread_mutex_lock(&beatflower_config_mutex);
+  SDL_LockMutex(beatflower_config_mutex);
 
   if(!beatflower_config_loaded)
   {
@@ -136,7 +136,7 @@ beatflower_xmms_settings(void)
 
   beatflower_newconfig = beatflower_config;
 
-  pthread_mutex_unlock(&beatflower_config_mutex);
+  SDL_UnlockMutex(beatflower_config_mutex);
 
   beatflower_xmms_settings_win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_object_set_data(GTK_OBJECT(beatflower_xmms_settings_win), "beatflower_xmms_settings_win", beatflower_xmms_settings_win);
@@ -955,20 +955,20 @@ on_apply_button_clicked(GtkButton *button)
 {
   beatflower_xmms_config_save(&beatflower_newconfig);
 
-  //pthread_mutex_lock(&beatflower_config_mutex);
+  //SDL_LockMutex(beatflower_config_mutex);
   beatflower_config = beatflower_newconfig;
-  //pthread_mutex_unlock(&beatflower_config_mutex);
+  //SDL_UnlockMutex(beatflower_config_mutex);
 
   //beatflower_xmms_config_save(&beatflower_config);
 
-  pthread_mutex_lock(&beatflower_status_mutex);
+  SDL_LockMutex(beatflower_status_mutex);
 
   if(beatflower_playing)
   {
     beatflower_reset = TRUE;
   }
 
-  pthread_mutex_unlock(&beatflower_status_mutex);
+  SDL_UnlockMutex(beatflower_status_mutex);
 }
 
 void 
