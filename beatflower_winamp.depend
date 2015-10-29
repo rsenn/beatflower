@@ -1,0 +1,380 @@
+# depslib dependency file v1.0
+1446116647 source:e:\sources\beatflower\beatflower.c
+	<math.h>
+	<stdlib.h>
+	<string.h>
+	<pthread.h>
+	<xmms/configfile.h>
+	<gtk/gtk.h>
+	"beatflower.h"
+	"beatflower_renderer.h"
+
+1446116647 e:\sources\beatflower\beatflower.h
+	<stdint.h>
+	<pthread.h>
+
+1446116648 e:\sources\beatflower\beatflower_renderer.h
+
+1441835444 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\math.h
+	<crtdefs.h>
+
+1441835450 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\crtdefs.h
+	<_mingw.h>
+
+1441835448 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\_mingw.h
+	"_mingw_mac.h"
+	"_mingw_secapi.h"
+	"_cygwin.h"
+	<vadefs.h>
+	"sdks/_mingw_directx.h"
+	"sdks/_mingw_ddk.h"
+
+1441835446 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\_mingw_mac.h
+
+1441835454 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\_mingw_secapi.h
+
+1441835453 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\_cygwin.h
+	<stddef.h>
+
+1441835448 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\stddef.h
+	<crtdefs.h>
+
+1441835450 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\vadefs.h
+	<_mingw.h>
+
+1441835442 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdks\_mingw_directx.h
+
+1441835442 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdks\_mingw_ddk.h
+
+1441835447 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\stdlib.h
+	<crtdefs.h>
+	<limits.h>
+	<sec_api/stdlib_s.h>
+	<malloc.h>
+
+1441835442 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\limits.h
+	<crtdefs.h>
+
+1441835440 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sec_api\stdlib_s.h
+	<stdlib.h>
+
+1441835444 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\malloc.h
+	<crtdefs.h>
+
+1441835440 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\string.h
+	<crtdefs.h>
+	<sec_api/string_s.h>
+
+1441835440 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sec_api\string_s.h
+	<string.h>
+
+1441835515 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\pthread.h
+	<stddef.h>
+	<errno.h>
+	<sys/types.h>
+	<process.h>
+	<limits.h>
+	<signal.h>
+	<sys/timeb.h>
+	"pthread_compat.h"
+	<pthread_unistd.h>
+
+1441835445 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\errno.h
+	<crtdefs.h>
+
+1441835442 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sys\types.h
+	<crtdefs.h>
+	<_mingw_off_t.h>
+
+1441835454 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\_mingw_off_t.h
+
+1441835455 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\process.h
+	<crtdefs.h>
+	<sys/types.h>
+
+1441835447 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\signal.h
+	<crtdefs.h>
+	<pthread_signal.h>
+
+1441835515 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\pthread_signal.h
+
+1441835442 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sys\timeb.h
+	<crtdefs.h>
+	<sec_api/sys/timeb_s.h>
+
+1441835440 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sec_api\sys\timeb_s.h
+	<sys/timeb.h>
+
+1441835515 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\pthread_compat.h
+	"pthread_time.h"
+
+1441835515 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\pthread_time.h
+	<sys/timeb.h>
+
+1441835515 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\pthread_unistd.h
+
+1441835448 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\stdint.h
+	<crtdefs.h>
+	<stddef.h>
+
+1446116648 source:e:\sources\beatflower\beatflower_renderer_sdl.c
+	<math.h>
+	<stdlib.h>
+	<string.h>
+	<pthread.h>
+	<SDL/SDL.h>
+	"beatflower.h"
+	"beatflower_renderer.h"
+
+1446114883 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_audio.h"
+	"SDL_cdrom.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_loadso.h"
+	"SDL_mutex.h"
+	"SDL_rwops.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_video.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_stdinc.h
+	"SDL_config.h"
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<memory.h>
+	<string.h>
+	<strings.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<iconv.h>
+	"begin_code.h"
+	<alloca.h>
+	<malloc.h>
+	<malloc.h>
+	<malloc.h>
+	<stdlib.h>
+	"close_code.h"
+
+1446114885 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_config.h
+	"SDL_platform.h"
+	<stdarg.h>
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_platform.h
+
+1441835442 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\stdarg.h
+	<_mingw_stdarg.h>
+
+1441835448 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\_mingw_stdarg.h
+	<vadefs.h>
+
+1441835442 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\stdio.h
+	<crtdefs.h>
+	<_mingw_print_push.h>
+	<_mingw_off_t.h>
+	<swprintf.inl>
+	<sec_api/stdio_s.h>
+	<_mingw_print_pop.h>
+
+1441835452 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\_mingw_print_push.h
+
+1441835451 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\swprintf.inl
+	<vadefs.h>
+
+1441835440 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sec_api\stdio_s.h
+	<stdio.h>
+
+1441835454 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\_mingw_print_pop.h
+
+1441835446 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\memory.h
+	<crtdefs.h>
+
+1441835453 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\strings.h
+	<string.h>
+
+1441835448 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\inttypes.h
+	<crtdefs.h>
+	<stdint.h>
+	<stddef.h>
+	<_mingw_print_push.h>
+	<_mingw_print_pop.h>
+
+1441835454 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\ctype.h
+	<crtdefs.h>
+
+1441835514 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\iconv.h
+	"iconv.h"
+	<stddef.h>
+	<errno.h>
+	<stddef.h>
+	<stdio.h>
+	<time.h>
+	<wchar.h>
+
+1441835455 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\time.h
+	<crtdefs.h>
+	<_timeval.h>
+	<sys/timeb.h>
+	<pthread_time.h>
+
+1441835450 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\_timeval.h
+
+1441835454 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\wchar.h
+	<crtdefs.h>
+	<_mingw_print_push.h>
+	<_mingw_off_t.h>
+	<_mingw_stat64.h>
+	<swprintf.inl>
+	<sec_api/wchar_s.h>
+	<_mingw_print_pop.h>
+
+1441835450 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\_mingw_stat64.h
+
+1441835440 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sec_api\wchar_s.h
+	<wchar.h>
+
+1446114885 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\begin_code.h
+
+1446114885 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\close_code.h
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_endian.h
+	"SDL_stdinc.h"
+	<endian.h>
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_mutex.h"
+	"begin_code.h"
+	<process.h>
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_cdrom.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_cpuinfo.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_active.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_quit.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_active.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keysym.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_keysym.h
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114885 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_video.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1446114884 e:\mingw-w64\i686-5.2.0-posix-sjlj-rt_v4-rev0\mingw32\i686-w64-mingw32\include\sdl\sdl_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+

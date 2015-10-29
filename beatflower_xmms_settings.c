@@ -773,12 +773,12 @@ beatflower_xmms_settings(void)
   gtk_signal_connect(GTK_OBJECT(angle_spinbutton), "changed", GTK_SIGNAL_FUNC(on_angle_spinbutton_changed), NULL);
   //gtk_signal_connect (GTK_OBJECT (fullscreen_checkbutton), "toggled", GTK_SIGNAL_FUNC (on_fullscreen_checkbutton_changed), NULL);
 //
-//	gtk_signal_connect (GTK_OBJECT (mode_option), "clicked", GTK_SIGNAL_FUNC (on_mode_option_changed), GTK_MENU(NULL));
+//  gtk_signal_connect (GTK_OBJECT (mode_option), "clicked", GTK_SIGNAL_FUNC (on_mode_option_changed), GTK_MENU(NULL));
 //  gtk_signal_connect (GTK_OBJECT (draw_option), "clicked", GTK_SIGNAL_FUNC (on_draw_option_changed), GTK_MENU(NULL));
 //  gtk_signal_connect (GTK_OBJECT (samples_option), "clicked", GTK_SIGNAL_FUNC (on_samples_option_changed), GTK_MENU(NULL));
 //  gtk_signal_connect (GTK_OBJECT (amplification_option), "clicked", GTK_SIGNAL_FUNC (on_amplification_option_changed), GTK_MENU(NULL));
 //  gtk_signal_connect (GTK_OBJECT (offset_option), "clicked", GTK_SIGNAL_FUNC (on_offset_option_changed), GTK_MENU(NULL));
-//	gtk_signal_connect (GTK_OBJECT (mode_option_menu), "changed", GTK_SIGNAL_FUNC (on_mode_option_changed), GTK_MENU(NULL));
+//  gtk_signal_connect (GTK_OBJECT (mode_option_menu), "changed", GTK_SIGNAL_FUNC (on_mode_option_changed), GTK_MENU(NULL));
 //  gtk_signal_connect (GTK_OBJECT (draw_option_menu), "changed", GTK_SIGNAL_FUNC (on_draw_option_changed), GTK_MENU(NULL));
 //  gtk_signal_connect (GTK_OBJECT (samples_option_menu), "changed", GTK_SIGNAL_FUNC (on_samples_option_changed), GTK_MENU(NULL));
 //  gtk_signal_connect (GTK_OBJECT (amplification_option_menu), "changed", GTK_SIGNAL_FUNC (on_amplification_option_changed), GTK_MENU(NULL));
