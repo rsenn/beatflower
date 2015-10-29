@@ -90,6 +90,7 @@ beatflower_xmms_init(void)
 
   beatflower_log = &beatflower_xmms_log;
 
+  beatflower_init();
   beatflower_start();
 }
 
@@ -127,7 +128,7 @@ beatflower_xmms_playback_stop(void)
   pthread_mutex_unlock(&beatflower_status_mutex);
 }
 
-void 
+void
 beatflower_xmms_render_pcm(short data[2][512])
 {
   pthread_mutex_lock(&beatflower_data_mutex);
@@ -135,7 +136,7 @@ beatflower_xmms_render_pcm(short data[2][512])
   pthread_mutex_unlock(&beatflower_data_mutex);
 }
 
-void 
+void
 beatflower_xmms_render_freq(short data[2][256])
 {
   pthread_mutex_lock(&beatflower_data_mutex);

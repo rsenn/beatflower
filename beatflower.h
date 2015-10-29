@@ -30,7 +30,7 @@ typedef struct config_s {
   double       angle;      /* rotation angle */
   bool         zoombeat;   /* zoom by beat */
   bool         rotatebeat; /* rotate by beat */
-  
+
   enum { COLOR_2_GRADIENT = 0, COLOR_3_GRADIENT = 1, COLOR_RANDOM = 2, COLOR_FREQ  = 3 }                  color_mode;
   enum { DRAW_DOTS        = 0, DRAW_BALLS       = 1, DRAW_CIRCLE  = 2, DRAW_LINES  = 3 }                  draw_mode;
   enum { SAMPLES_32       = 0, SAMPLES_64       = 1, SAMPLES_128  = 2, SAMPLES_256 = 3, SAMPLES_512 = 4 } samples_mode;
@@ -83,6 +83,7 @@ extern beatflower_state_t beatflower;
 /********************************** Function prototypes ***************************************/
 
 void beatflower_config_default(beatflower_config_t *cfg);
+void beatflower_init(void);
 void beatflower_start(void);
 int beatflower_scope_amplification(int value);
 int beatflower_scope_offset(int value);

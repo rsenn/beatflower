@@ -71,7 +71,7 @@ static void ball_scope(short data[512]);
 static SDL_Surface *screen;
 
 /****************************************************************************************
- * initialize the beatflower engine 
+ * initialize the beatflower engine
  ****************************************************************************************/
 void
 beatflower_renderer_sdl_init(void)
@@ -95,7 +95,7 @@ beatflower_renderer_sdl_init(void)
   pthread_mutex_init(&beatflower_config_mutex, NULL);
 
   pthread_mutex_lock(&beatflower_config_mutex);
-  
+
  // beatflower_xmms_config_load(&beatflower_config);
 
   beatflower_log("Initializing beatflower video mode %ux%u ...", beatflower_config.width, beatflower_config.height);
@@ -181,7 +181,7 @@ beatflower_renderer_sdl_thread(void *blah)
 {
   //fprintf(stderr,"%s()\n", __PRETTY_FUNCTION__); fflush(stderr);
 
-  beatflower_renderer_sdl_init();
+//  beatflower_renderer_sdl_init();
 
   while(!beatflower_check_playing())
   {

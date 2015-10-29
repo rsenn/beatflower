@@ -55,7 +55,7 @@ const beatflower_renderer_t *beatflower_renderer = &beatflower_renderer_sdl;
 void         beatflower_config_default(beatflower_config_t *beatflower_config);
 
 
-void 
+void
 beatflower_config_default(beatflower_config_t *cfg)
 {
 //  g_message("%s:", __PRETTY_FUNCTION__);
@@ -80,16 +80,22 @@ beatflower_config_default(beatflower_config_t *cfg)
 }
 
 void
-beatflower_start(void)
+beatflower_init(void)
 {
   beatflower_finished = FALSE;
   beatflower_playing = FALSE;
   beatflower_reset = FALSE;
 
+  beatflower_renderer->init();
+}
+
+void
+beatflower_start(void)
+{
   pthread_create(&beatflower_thread, NULL, (void *)beatflower_renderer->thread, NULL);
 }
 
-int 
+int
 beatflower_scope_amplification(int value)
 {
   register int v = value;
@@ -107,7 +113,7 @@ beatflower_scope_amplification(int value)
   return v;
 }
 
-int 
+int
 beatflower_scope_offset(int value)
 {
   register int v = beatflower_scope_amplification(value);
@@ -127,7 +133,7 @@ beatflower_scope_offset(int value)
   return v;
 }
 
-void 
+void
 beatflower_find_color(int16_t data[2][256])
 {
   uint32_t value = 0;
@@ -164,7 +170,7 @@ beatflower_find_color(int16_t data[2][256])
   }
 }
 
-bool 
+bool
 beatflower_check_finished(void)
 {
   bool ret;
@@ -184,7 +190,7 @@ beatflower_check_finished(void)
   return ret;
 }
 
- bool 
+ bool
 beatflower_check_playing(void)
 {
   bool ret;
